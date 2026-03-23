@@ -50,11 +50,12 @@ export async function DELETE(
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
+  const adminSb = createAdminClient();
+
   // Storage에서 사진 삭제
   const { data: photos } = await supabase.from('photos').select('storage_path, thumbnail_path').eq('album_id', albumId);
   if (photos && photos.length > 0) {
     const paths = photos.flatMap((p) => [p.storage_path, p.thumbnail_path].filter(Boolean) as string[]);
-    const adminSb = createAdminClient();
     await adminSb.storage.from('photo').remove(paths);
   }
 
