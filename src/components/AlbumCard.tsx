@@ -2,13 +2,16 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { formatDate } from '@/lib/utils';
 import type { Album } from '@/types';
+import LikeButton from './LikeButton';
 
 interface AlbumCardProps {
   album: Album & {
     class?: { name: string; department?: { name: string } };
     creator?: { name: string };
     photos?: { id: string; thumbnail_path: string | null; storage_path: string }[];
+    likes?: { user_id: string }[];
   };
+  currentUserId?: string;
 }
 
 const deptColors: Record<string, string> = {
@@ -21,11 +24,13 @@ const deptColors: Record<string, string> = {
   '청년부': 'from-candy-blue to-candy-green',
 };
 
-export default function AlbumCard({ album }: AlbumCardProps) {
+export default function AlbumCard({ album, currentUserId }: AlbumCardProps) {
   const photoCount = album.photos?.length || 0;
   const coverPhoto = album.photos?.[0];
   const deptName = album.class?.department?.name || '';
   const gradient = deptColors[deptName] || 'from-candy-purple to-candy-blue';
+  const likeCount = album.likes?.length || 0;
+  const isLiked = currentUserId ? album.likes?.some((l) => l.user_id === currentUserId) || false : false;
 
   return (
     <Link
@@ -57,7 +62,15 @@ export default function AlbumCard({ album }: AlbumCardProps) {
         <h3 className="font-bold text-sm text-[var(--text)] line-clamp-1">{album.title}</h3>
         <div className="flex items-center justify-between mt-1.5">
           <span className="text-xs text-[var(--text-sub)]">{formatDate(album.event_date)}</span>
-          <span className="text-xs text-[var(--text-sub)]">{album.creator?.name}</span>
+          <div className="flex items-center gap-2">
+            <LikeButton
+              albumId={album.id}
+              initialLiked={isLiked}
+              initialCount={likeCount}
+              size="small"
+            />
+            <span className="text-xs text-[var(--text-sub)]">{album.creator?.name}</span>
+          </div>
         </div>
       </div>
     </Link>

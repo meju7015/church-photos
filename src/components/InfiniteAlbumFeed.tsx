@@ -8,14 +8,17 @@ type AlbumWithRelations = Album & {
   class?: { name: string; department?: { name: string } };
   creator?: { name: string };
   photos?: { id: string; thumbnail_path: string | null; storage_path: string }[];
+  likes?: { user_id: string }[];
 };
 
 export default function InfiniteAlbumFeed({
   initialAlbums,
   search,
+  currentUserId,
 }: {
   initialAlbums: AlbumWithRelations[];
   search?: string;
+  currentUserId?: string;
 }) {
   const [albums, setAlbums] = useState<AlbumWithRelations[]>(initialAlbums);
   const [hasMore, setHasMore] = useState(initialAlbums.length >= 12);
@@ -78,7 +81,7 @@ export default function InfiniteAlbumFeed({
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {albums.map((album) => (
-          <AlbumCard key={album.id} album={album} />
+          <AlbumCard key={album.id} album={album} currentUserId={currentUserId} />
         ))}
       </div>
 

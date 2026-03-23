@@ -28,7 +28,8 @@ export async function GET(request: Request) {
       *,
       class:classes(*, department:departments(*)),
       creator:users!albums_created_by_fkey(name),
-      photos(id, thumbnail_path, storage_path)
+      photos(id, thumbnail_path, storage_path),
+      likes(user_id)
     `)
     .in('class_id', classIds)
     .order('created_at', { ascending: false })

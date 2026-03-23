@@ -7,6 +7,7 @@ import CommentSection from '@/components/CommentSection';
 import AlbumActions from '@/components/AlbumActions';
 import ZipDownloadButton from '@/components/ZipDownloadButton';
 import ExpandableText from '@/components/ExpandableText';
+import LikeButton from '@/components/LikeButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -41,6 +42,19 @@ export default async function AlbumPage({
     .eq('album_id', albumId)
     .order('created_at', { ascending: true });
 
+  // 좋아요 데이터 조회
+  const { count: likeCount } = await supabase
+    .from('likes')
+    .select('*', { count: 'exact', head: true })
+    .eq('album_id', albumId);
+
+  const { data: userLike } = await supabase
+    .from('likes')
+    .select('id')
+    .eq('album_id', albumId)
+    .eq('user_id', user.id)
+    .single();
+
   const canManage = album.created_by === user.id || profile?.role === 'admin';
 
   const photos = (album.photos || []).map((p: any) => ({
@@ -72,6 +86,13 @@ export default async function AlbumPage({
               <span>{formatDate(album.event_date)}</span>
               <span>{(album.creator as any)?.name}</span>
               <span>{photos.length}장</span>
+            </div>
+            <div className="mt-3">
+              <LikeButton
+                albumId={albumId}
+                initialLiked={!!userLike}
+                initialCount={likeCount || 0}
+              />
             </div>
           </div>
           {canManage && (

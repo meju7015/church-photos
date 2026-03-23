@@ -30,7 +30,8 @@ export default async function HomePage({
       *,
       class:classes(*, department:departments(*)),
       creator:users!albums_created_by_fkey(name),
-      photos(id, thumbnail_path, storage_path)
+      photos(id, thumbnail_path, storage_path),
+      likes(user_id)
     `)
     .in('class_id', classIds.length > 0 ? classIds : [''])
     .order('created_at', { ascending: false })
@@ -88,7 +89,7 @@ export default async function HomePage({
         <div className="mb-4">
           <SearchBar basePath="/" />
         </div>
-        <InfiniteAlbumFeed initialAlbums={(albums as any) || []} search={params.search} />
+        <InfiniteAlbumFeed initialAlbums={(albums as any) || []} search={params.search} currentUserId={user.id} />
       </div>
     </div>
   );

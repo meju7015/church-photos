@@ -12,6 +12,7 @@ export default async function ClassPage({
 }) {
   const { classId } = await params;
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
   const { data: cls } = await supabase
     .from('classes')
@@ -27,7 +28,8 @@ export default async function ClassPage({
       *,
       class:classes(*, department:departments(*)),
       creator:users!albums_created_by_fkey(name),
-      photos(id, thumbnail_path, storage_path)
+      photos(id, thumbnail_path, storage_path),
+      likes(user_id)
     `)
     .eq('class_id', classId)
     .order('event_date', { ascending: false });
@@ -47,7 +49,7 @@ export default async function ClassPage({
       {albums && albums.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {albums.map((album) => (
-            <AlbumCard key={album.id} album={album as any} />
+            <AlbumCard key={album.id} album={album as any} currentUserId={user?.id} />
           ))}
         </div>
       ) : (
