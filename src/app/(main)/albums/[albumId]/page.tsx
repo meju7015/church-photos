@@ -7,6 +7,8 @@ import CommentSection from '@/components/CommentSection';
 import AlbumActions from '@/components/AlbumActions';
 import ZipDownloadButton from '@/components/ZipDownloadButton';
 
+export const dynamic = 'force-dynamic';
+
 export default async function AlbumPage({
   params,
 }: {

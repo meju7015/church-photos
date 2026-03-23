@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import AlbumCard from '@/components/AlbumCard';
 
+export const dynamic = 'force-dynamic';
+
 export default async function ClassPage({
   params,
 }: {

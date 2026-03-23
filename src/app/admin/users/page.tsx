@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server';
 import { formatDateTime } from '@/lib/utils';
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminUsersPage() {
   const supabase = await createClient();
 
