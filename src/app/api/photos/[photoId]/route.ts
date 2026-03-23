@@ -25,7 +25,7 @@ export async function DELETE(
   await adminSb.storage.from('photo').remove(paths);
 
   // DB에서 삭제
-  const { error } = await supabase.from('photos').delete().eq('id', photoId);
+  const { error } = await adminSb.from('photos').delete().eq('id', photoId);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   return NextResponse.json({ ok: true });

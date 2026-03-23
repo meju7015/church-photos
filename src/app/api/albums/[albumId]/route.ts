@@ -25,7 +25,9 @@ export async function PATCH(
   if (body.description !== undefined) updates.description = body.description ? String(body.description).slice(0, 500) : null as any;
   if (body.event_date) updates.event_date = body.event_date;
 
-  const { error } = await supabase.from('albums').update(updates).eq('id', albumId);
+  // RLS에 UPDATE 정책이 없을 수 있으므로 admin client 사용
+  const adminSb = createAdminClient();
+  const { error } = await adminSb.from('albums').update(updates).eq('id', albumId);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   return NextResponse.json({ ok: true });
@@ -57,7 +59,7 @@ export async function DELETE(
   }
 
   // DB에서 앨범 삭제 (CASCADE로 photos, comments, notifications도 삭제)
-  const { error } = await supabase.from('albums').delete().eq('id', albumId);
+  const { error } = await adminSb.from('albums').delete().eq('id', albumId);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   return NextResponse.json({ ok: true });
