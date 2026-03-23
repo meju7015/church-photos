@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import InfiniteAlbumFeed from '@/components/InfiniteAlbumFeed';
 import SearchBar from '@/components/SearchBar';
+import { getDailyVerse } from '@/lib/bible-verses';
 
 export const dynamic = 'force-dynamic';
 
@@ -41,23 +42,19 @@ export default async function HomePage({
 
   const { data: albums } = await query;
 
-  const { data: profile } = await supabase
-    .from('users')
-    .select('name')
-    .eq('id', user.id)
-    .single();
-
   return (
     <div>
-      {/* Welcome */}
-      <div className="gradient-candy rounded-3xl p-6 mb-6 text-white shadow-lg shadow-candy-purple/20">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-white/80 text-sm">안녕하세요</p>
-            <h1 className="text-xl font-extrabold mt-0.5">{profile?.name}님!</h1>
+      {/* 오늘의 말씀 */}
+      {(() => {
+        const verse = getDailyVerse();
+        return (
+          <div className="gradient-candy rounded-3xl p-6 mb-6 text-white shadow-lg shadow-candy-purple/20">
+            <p className="text-white/70 text-xs font-semibold mb-2">오늘의 말씀</p>
+            <p className="text-base font-bold leading-relaxed">{verse.text}</p>
+            <p className="text-white/60 text-xs mt-2 text-right">{verse.ref}</p>
           </div>
-        </div>
-      </div>
+        );
+      })()}
 
       {/* 내 반 */}
       <div className="mb-6">
