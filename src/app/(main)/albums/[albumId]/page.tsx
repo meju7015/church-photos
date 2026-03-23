@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import { formatDate } from '@/lib/utils';
@@ -42,13 +43,14 @@ export default async function AlbumPage({
     .eq('album_id', albumId)
     .order('created_at', { ascending: true });
 
-  // 좋아요 데이터 조회
-  const { count: likeCount } = await supabase
+  // 좋아요 데이터 조회 (admin client로 RLS 우회)
+  const adminSb = createAdminClient();
+  const { count: likeCount } = await adminSb
     .from('likes')
     .select('*', { count: 'exact', head: true })
     .eq('album_id', albumId);
 
-  const { data: userLike } = await supabase
+  const { data: userLike } = await adminSb
     .from('likes')
     .select('id')
     .eq('album_id', albumId)

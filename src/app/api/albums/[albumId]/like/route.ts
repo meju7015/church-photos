@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 
 export async function POST(
   request: Request,
@@ -10,22 +11,35 @@ export async function POST(
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { error } = await supabase
+  const adminSb = createAdminClient();
+
+  // 기존 좋아요 확인
+  const { data: existing } = await adminSb
     .from('likes')
-    .insert({ album_id: albumId, user_id: user.id });
+    .select('id')
+    .eq('album_id', albumId)
+    .eq('user_id', user.id)
+    .single();
 
-  if (error?.code === '23505') {
-    // 이미 좋아요 → 취소 (토글)
-    await supabase
+  if (existing) {
+    // 이미 좋아요 → 취소
+    await adminSb.from('likes').delete().eq('id', existing.id);
+
+    const { count } = await adminSb
       .from('likes')
-      .delete()
-      .eq('album_id', albumId)
-      .eq('user_id', user.id);
+      .select('*', { count: 'exact', head: true })
+      .eq('album_id', albumId);
 
-    return NextResponse.json({ liked: false });
+    return NextResponse.json({ liked: false, count: count || 0 });
   }
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  // 좋아요 추가
+  await adminSb.from('likes').insert({ album_id: albumId, user_id: user.id });
 
-  return NextResponse.json({ liked: true });
+  const { count } = await adminSb
+    .from('likes')
+    .select('*', { count: 'exact', head: true })
+    .eq('album_id', albumId);
+
+  return NextResponse.json({ liked: true, count: count || 0 });
 }

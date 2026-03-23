@@ -4,6 +4,7 @@ import Link from 'next/link';
 import InfiniteAlbumFeed from '@/components/InfiniteAlbumFeed';
 import SearchBar from '@/components/SearchBar';
 import { getDailyVerse } from '@/lib/bible-verses';
+import { createAdminClient } from '@/lib/supabase/admin';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,8 +31,7 @@ export default async function HomePage({
       *,
       class:classes(*, department:departments(*)),
       creator:users!albums_created_by_fkey(name),
-      photos(id, thumbnail_path, storage_path),
-      likes(user_id)
+      photos(id, thumbnail_path, storage_path)
     `)
     .in('class_id', classIds.length > 0 ? classIds : [''])
     .order('created_at', { ascending: false })
@@ -42,6 +42,18 @@ export default async function HomePage({
   }
 
   const { data: albums } = await query;
+
+  // likes를 admin client로 별도 조회 (RLS 우회)
+  const adminSb = createAdminClient();
+  const albumIds = albums?.map((a) => a.id) || [];
+  const { data: allLikes } = albumIds.length > 0
+    ? await adminSb.from('likes').select('album_id, user_id').in('album_id', albumIds)
+    : { data: [] };
+
+  const albumsWithLikes = albums?.map((album) => ({
+    ...album,
+    likes: allLikes?.filter((l) => l.album_id === album.id) || [],
+  })) || [];
 
   return (
     <div>
@@ -89,7 +101,7 @@ export default async function HomePage({
         <div className="mb-4">
           <SearchBar basePath="/" />
         </div>
-        <InfiniteAlbumFeed initialAlbums={(albums as any) || []} search={params.search} currentUserId={user.id} />
+        <InfiniteAlbumFeed initialAlbums={albumsWithLikes as any} search={params.search} currentUserId={user.id} />
       </div>
     </div>
   );

@@ -29,7 +29,11 @@ export default function LikeButton({
     setCount((c) => (liked ? c - 1 : c + 1));
 
     const res = await fetch(`/api/albums/${albumId}/like`, { method: 'POST' });
-    if (!res.ok) {
+    if (res.ok) {
+      const data = await res.json();
+      setLiked(data.liked);
+      setCount(data.count);
+    } else {
       // 롤백
       setLiked(liked);
       setCount(count);

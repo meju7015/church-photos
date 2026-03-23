@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import AlbumCard from '@/components/AlbumCard';
@@ -28,11 +29,22 @@ export default async function ClassPage({
       *,
       class:classes(*, department:departments(*)),
       creator:users!albums_created_by_fkey(name),
-      photos(id, thumbnail_path, storage_path),
-      likes(user_id)
+      photos(id, thumbnail_path, storage_path)
     `)
     .eq('class_id', classId)
     .order('event_date', { ascending: false });
+
+  // likes를 admin client로 별도 조회
+  const adminSb = createAdminClient();
+  const albumIds = albums?.map((a) => a.id) || [];
+  const { data: allLikes } = albumIds.length > 0
+    ? await adminSb.from('likes').select('album_id, user_id').in('album_id', albumIds)
+    : { data: [] };
+
+  const albumsWithLikes = albums?.map((album) => ({
+    ...album,
+    likes: allLikes?.filter((l) => l.album_id === album.id) || [],
+  })) || [];
 
   return (
     <div>
@@ -46,15 +58,14 @@ export default async function ClassPage({
         {(cls.department as any)?.name} - {cls.name}
       </h1>
 
-      {albums && albums.length > 0 ? (
+      {albumsWithLikes.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {albums.map((album) => (
+          {albumsWithLikes.map((album) => (
             <AlbumCard key={album.id} album={album as any} currentUserId={user?.id} />
           ))}
         </div>
       ) : (
         <div className="text-center py-16 bg-[var(--surface-card)] rounded-3xl border border-[var(--border)]">
-          <span className="text-5xl mb-4 block">📷</span>
           <p className="text-[var(--text-sub)]">아직 앨범이 없습니다</p>
         </div>
       )}
