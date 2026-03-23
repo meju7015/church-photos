@@ -5,6 +5,13 @@ import ThemeProvider from "@/components/ThemeProvider";
 export const metadata: Metadata = {
   title: "우리교회 포토앨범",
   description: "우리 교회 부서별 사진 공유 서비스",
+  manifest: "/manifest.json",
+  themeColor: "#C084FC",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "교회앨범",
+  },
 };
 
 export default function RootLayout({

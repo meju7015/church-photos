@@ -209,9 +209,22 @@ export default function AdminMembersPage() {
                     </div>
                     <span className="text-sm font-medium">{m.user?.name}</span>
                   </div>
-                  <span className="text-xs text-gray-500">
-                    {m.role === 'teacher' ? '선생님' : '학부모'}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-500">
+                      {m.role === 'teacher' ? '선생님' : '학부모'}
+                    </span>
+                    <button
+                      onClick={async () => {
+                        if (!confirm(`${m.user?.name}님을 이 반에서 제거하시겠습니까?`)) return;
+                        const supabase = createClient();
+                        await supabase.from('user_classes').delete().eq('user_id', m.user_id).eq('class_id', selectedClass);
+                        setMembers((prev) => prev.filter((x) => x.user_id !== m.user_id));
+                      }}
+                      className="text-xs text-red-400 hover:text-red-600"
+                    >
+                      제거
+                    </button>
+                  </div>
                 </div>
               ))}
               {members.length === 0 && (

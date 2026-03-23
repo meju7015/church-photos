@@ -1,11 +1,17 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import AlbumCard from '@/components/AlbumCard';
+import InfiniteAlbumFeed from '@/components/InfiniteAlbumFeed';
+import SearchBar from '@/components/SearchBar';
 
 export const dynamic = 'force-dynamic';
 
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ search?: string }>;
+}) {
+  const params = await searchParams;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
@@ -17,7 +23,7 @@ export default async function HomePage() {
 
   const classIds = userClasses?.map((uc) => uc.class_id) || [];
 
-  const { data: albums } = await supabase
+  let query = supabase
     .from('albums')
     .select(`
       *,
@@ -27,7 +33,13 @@ export default async function HomePage() {
     `)
     .in('class_id', classIds.length > 0 ? classIds : [''])
     .order('created_at', { ascending: false })
-    .limit(20);
+    .limit(12);
+
+  if (params.search) {
+    query = query.ilike('title', `%${params.search}%`);
+  }
+
+  const { data: albums } = await query;
 
   const { data: profile } = await supabase
     .from('users')
@@ -49,9 +61,7 @@ export default async function HomePage() {
 
       {/* 내 반 */}
       <div className="mb-6">
-        <h2 className="text-base font-bold text-[var(--text)] mb-3 flex items-center gap-2">
-          내 반
-        </h2>
+        <h2 className="text-base font-bold text-[var(--text)] mb-3">내 반</h2>
         <div className="flex flex-wrap gap-2">
           {userClasses?.map((uc) => {
             const cls = uc.class as any;
@@ -71,23 +81,17 @@ export default async function HomePage() {
         </div>
       </div>
 
-      {/* 최근 앨범 */}
+      {/* 검색 + 앨범 */}
       <div>
-        <h2 className="text-base font-bold text-[var(--text)] mb-3 flex items-center gap-2">
-          최근 앨범
-        </h2>
-        {albums && albums.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {albums.map((album) => (
-              <AlbumCard key={album.id} album={album as any} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-16 bg-[var(--surface-card)] rounded-3xl border border-[var(--border)]">
-            <p className="text-[var(--text-sub)]">아직 앨범이 없습니다</p>
-            <p className="text-xs text-[var(--text-sub)] mt-1">선생님이 사진을 올리면 여기에 나타나요!</p>
-          </div>
-        )}
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-base font-bold text-[var(--text)]">
+            {params.search ? `"${params.search}" 검색 결과` : '최근 앨범'}
+          </h2>
+        </div>
+        <div className="mb-4">
+          <SearchBar basePath="/" />
+        </div>
+        <InfiniteAlbumFeed initialAlbums={(albums as any) || []} search={params.search} />
       </div>
     </div>
   );
