@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
 
@@ -6,9 +7,18 @@ export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
   const error = searchParams.get('error');
+  const state = searchParams.get('state');
 
   if (error || !code) {
     return NextResponse.redirect(`${origin}/login?error=kakao_denied`);
+  }
+
+  // CSRF 검증
+  const cookieStore = await cookies();
+  const savedState = cookieStore.get('kakao_oauth_state')?.value;
+  cookieStore.delete('kakao_oauth_state');
+  if (!state || state !== savedState) {
+    return NextResponse.redirect(`${origin}/login?error=invalid_state`);
   }
 
   try {

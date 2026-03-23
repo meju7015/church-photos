@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { formatDate } from '@/lib/utils';
 import PhotoGrid from '@/components/PhotoGrid';
 import CommentSection from '@/components/CommentSection';
+import AlbumActions from '@/components/AlbumActions';
+import ZipDownloadButton from '@/components/ZipDownloadButton';
 
 export default async function AlbumPage({
   params,
@@ -14,6 +16,8 @@ export default async function AlbumPage({
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
+
+  const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
 
   const { data: album } = await supabase
     .from('albums')
@@ -34,12 +38,15 @@ export default async function AlbumPage({
     .eq('album_id', albumId)
     .order('created_at', { ascending: true });
 
+  const canManage = album.created_by === user.id || profile?.role === 'admin';
+
   const photos = (album.photos || []).map((p: any) => ({
     ...p,
     url: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/photo/${p.storage_path}`,
     thumbnailUrl: p.thumbnail_path
       ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/photo/${p.thumbnail_path}`
       : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/photo/${p.storage_path}`,
+    canDelete: p.uploaded_by === user.id || profile?.role === 'admin',
   }));
 
   return (
@@ -52,22 +59,35 @@ export default async function AlbumPage({
         >
           <span>&larr;</span> {(album.class as any)?.department?.name} - {(album.class as any)?.name}
         </Link>
-        <h1 className="text-xl font-extrabold text-[var(--text)] mt-3">{album.title}</h1>
-        {album.description && (
-          <p className="text-[var(--text-sub)] text-sm mt-1">{album.description}</p>
-        )}
-        <div className="flex items-center gap-3 mt-2 text-sm text-[var(--text-sub)]">
-          <span>{formatDate(album.event_date)}</span>
-          <span>{(album.creator as any)?.name}</span>
-          <span>{photos.length}장</span>
+        <div className="flex items-start justify-between mt-3">
+          <div>
+            <h1 className="text-xl font-extrabold text-[var(--text)]">{album.title}</h1>
+            {album.description && (
+              <p className="text-[var(--text-sub)] text-sm mt-1">{album.description}</p>
+            )}
+            <div className="flex items-center gap-3 mt-2 text-sm text-[var(--text-sub)]">
+              <span>{formatDate(album.event_date)}</span>
+              <span>{(album.creator as any)?.name}</span>
+              <span>{photos.length}장</span>
+            </div>
+          </div>
+          {canManage && (
+            <AlbumActions
+              albumId={albumId}
+              albumTitle={album.title}
+              albumDescription={album.description || ''}
+              albumEventDate={album.event_date}
+            />
+          )}
         </div>
       </div>
 
-      {/* Upload button */}
-      <div className="flex justify-end mb-4">
+      {/* Action buttons */}
+      <div className="flex justify-end gap-2 mb-4">
+        {photos.length > 0 && <ZipDownloadButton photos={photos} albumTitle={album.title} />}
         <Link
           href={`/albums/${albumId}/upload`}
-          className="px-5 py-2.5 gradient-candy text-white rounded-2xl text-sm font-bold hover:opacity-90 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md shadow-candy-purple/20 flex items-center gap-1.5"
+          className="px-5 py-2.5 gradient-candy text-white rounded-2xl text-sm font-bold hover:opacity-90 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md shadow-candy-purple/20"
         >
           사진 추가
         </Link>

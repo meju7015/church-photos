@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { usePhotoUpload } from '@/hooks/usePhotoUpload';
 import type { Department, Class } from '@/types';
 
 const inputClass = "w-full px-4 py-2.5 bg-[var(--bg)] border border-[var(--border)] rounded-2xl focus:ring-2 focus:ring-candy-purple focus:border-transparent outline-none text-[var(--text)] placeholder-[var(--text-sub)]";
@@ -10,6 +11,7 @@ const labelClass = "block text-sm font-semibold text-[var(--text)] mb-1.5";
 
 export default function AdminUploadPage() {
   const router = useRouter();
+  const { files, previews, uploading, progress, error: uploadError, addFiles, removeFile, upload } = usePhotoUpload();
   const [departments, setDepartments] = useState<Department[]>([]);
   const [classes, setClasses] = useState<Class[]>([]);
   const [selectedDept, setSelectedDept] = useState('');
@@ -17,19 +19,15 @@ export default function AdminUploadPage() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [eventDate, setEventDate] = useState(new Date().toISOString().split('T')[0]);
-  const [files, setFiles] = useState<File[]>([]);
-  const [previews, setPreviews] = useState<string[]>([]);
-  const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [dragOver, setDragOver] = useState(false);
 
   useEffect(() => {
-    const fetchDepartments = async () => {
+    const fetchDepts = async () => {
       const supabase = createClient();
       const { data } = await supabase.from('departments').select('*').order('sort_order');
       if (data) setDepartments(data);
     };
-    fetchDepartments();
+    fetchDepts();
   }, []);
 
   useEffect(() => {
@@ -42,26 +40,9 @@ export default function AdminUploadPage() {
     fetchClasses();
   }, [selectedDept]);
 
-  const handleFiles = useCallback((newFiles: FileList | File[]) => {
-    const imageFiles = Array.from(newFiles).filter((f) => f.type.startsWith('image/'));
-    setFiles((prev) => [...prev, ...imageFiles]);
-    imageFiles.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (e) => { setPreviews((prev) => [...prev, e.target?.result as string]); };
-      reader.readAsDataURL(file);
-    });
-  }, []);
-
-  const removeFile = (index: number) => {
-    setFiles((prev) => prev.filter((_, i) => i !== index));
-    setPreviews((prev) => prev.filter((_, i) => i !== index));
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedClass || !title || files.length === 0) return;
-    setUploading(true);
-    setProgress(0);
 
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -73,24 +54,12 @@ export default function AdminUploadPage() {
       .select()
       .single();
 
-    if (albumErr || !album) { alert('앨범 생성에 실패했습니다.'); setUploading(false); return; }
+    if (albumErr || !album) { alert('앨범 생성에 실패했습니다.'); return; }
 
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const ext = file.name.split('.').pop();
-      const fileName = `${Date.now()}_${i}.${ext}`;
-      const storagePath = `${selectedClass}/${album.id}/${fileName}`;
+    const success = await upload({ albumId: album.id, classId: selectedClass });
+    if (!success) return;
 
-      const { error: uploadErr } = await supabase.storage
-        .from('photo')
-        .upload(storagePath, file, { contentType: file.type });
-
-      if (uploadErr) { console.error('Upload error:', uploadErr); alert(`업로드 실패: ${uploadErr.message}`); setUploading(false); return; }
-
-      await supabase.from('photos').insert({ album_id: album.id, storage_path: storagePath, uploaded_by: user.id });
-      setProgress(Math.round(((i + 1) / files.length) * 100));
-    }
-
+    // 알림 생성
     const { data: classMembers } = await supabase.from('user_classes').select('user_id').eq('class_id', selectedClass);
     if (classMembers) {
       const notifications = classMembers
@@ -99,15 +68,12 @@ export default function AdminUploadPage() {
       if (notifications.length > 0) await supabase.from('notifications').insert(notifications);
     }
 
-    setUploading(false);
     router.push(`/albums/${album.id}`);
   };
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-xl font-extrabold text-[var(--text)] mb-6">
-        새 앨범 생성
-      </h1>
+      <h1 className="text-xl font-extrabold text-[var(--text)] mb-6">새 앨범 생성</h1>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="bg-[var(--surface-card)] rounded-3xl border border-[var(--border)] p-6 space-y-4">
@@ -127,42 +93,47 @@ export default function AdminUploadPage() {
               </select>
             </div>
           </div>
-
           <div>
             <label className={labelClass}>앨범 제목</label>
-            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="예: 3월 셋째주 주일예배" required className={inputClass} />
+            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="예: 3월 셋째주 주일예배" required maxLength={100} className={inputClass} />
           </div>
-
           <div>
             <label className={labelClass}>행사 날짜</label>
             <input type="date" value={eventDate} onChange={(e) => setEventDate(e.target.value)} required className={inputClass} />
           </div>
-
           <div>
             <label className={labelClass}>설명 (선택)</label>
-            <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="앨범에 대한 간단한 설명" rows={2} className={`${inputClass} resize-none`} />
+            <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="앨범에 대한 간단한 설명" rows={2} maxLength={500} className={`${inputClass} resize-none`} />
           </div>
         </div>
 
         {/* Photo upload */}
-        <div>
-          <div
-            onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-            onDragLeave={() => setDragOver(false)}
-            onDrop={(e) => { e.preventDefault(); setDragOver(false); handleFiles(e.dataTransfer.files); }}
-            className={`border-2 border-dashed rounded-3xl p-8 text-center transition-all ${
-              dragOver ? 'border-candy-purple bg-candy-purple/5 scale-[1.01]' : 'border-[var(--border)] bg-[var(--surface-card)]'
-            }`}
-          >
-            <p className="text-[var(--text-sub)] text-sm mb-3">사진을 드래그하거나 클릭하여 선택</p>
-            <label className="inline-block px-5 py-2.5 gradient-candy text-white rounded-2xl text-sm font-bold cursor-pointer hover:opacity-90 shadow-md shadow-candy-purple/20">
-              파일 선택
-              <input type="file" accept="image/*" multiple onChange={(e) => e.target.files && handleFiles(e.target.files)} className="hidden" />
-            </label>
-          </div>
+        <div
+          onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={(e) => { e.preventDefault(); setDragOver(false); addFiles(e.dataTransfer.files); }}
+          className={`border-2 border-dashed rounded-3xl p-8 text-center transition-all ${
+            dragOver ? 'border-candy-purple bg-candy-purple/5 scale-[1.01]' : 'border-[var(--border)] bg-[var(--surface-card)]'
+          }`}
+        >
+          <p className="text-[var(--text-sub)] text-sm mb-1">사진을 드래그하거나 클릭하여 선택</p>
+          <p className="text-xs text-[var(--text-sub)] mb-3">최대 10MB, JPG/PNG/WebP</p>
+          <label className="inline-block px-5 py-2.5 gradient-candy text-white rounded-2xl text-sm font-bold cursor-pointer hover:opacity-90 shadow-md shadow-candy-purple/20">
+            파일 선택
+            <input type="file" accept="image/*" multiple onChange={(e) => e.target.files && addFiles(e.target.files)} className="hidden" />
+          </label>
+        </div>
 
-          {previews.length > 0 && (
-            <div className="mt-3 grid grid-cols-4 sm:grid-cols-6 gap-2">
+        {uploadError && (
+          <div className="p-3 bg-candy-red/10 border border-candy-red/20 rounded-2xl text-sm text-candy-red whitespace-pre-line">
+            {uploadError}
+          </div>
+        )}
+
+        {previews.length > 0 && (
+          <div>
+            <p className="text-sm font-semibold text-[var(--text)] mb-2">{files.length}장 선택됨</p>
+            <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
               {previews.map((preview, index) => (
                 <div key={index} className="relative aspect-square rounded-2xl overflow-hidden bg-[var(--border)]">
                   <img src={preview} alt="" className="w-full h-full object-cover" />
@@ -170,9 +141,8 @@ export default function AdminUploadPage() {
                 </div>
               ))}
             </div>
-          )}
-          {files.length > 0 && <p className="text-sm text-[var(--text-sub)] mt-2">{files.length}장 선택됨</p>}
-        </div>
+          </div>
+        )}
 
         {uploading && (
           <div>
