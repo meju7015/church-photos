@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { formatDate } from '@/lib/utils';
 import type { Album } from '@/types';
 
@@ -33,10 +34,12 @@ export default function AlbumCard({ album }: AlbumCardProps) {
     >
       <div className="aspect-[4/3] bg-[var(--border)] relative">
         {coverPhoto ? (
-          <img
+          <Image
             src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/photo/${coverPhoto.thumbnail_path || coverPhoto.storage_path}`}
             alt={album.title}
-            className="w-full h-full object-cover"
+            fill
+            sizes="(max-width: 640px) 100vw, 50vw"
+            className="object-cover"
           />
         ) : (
           <div className={`w-full h-full bg-gradient-to-br ${gradient} opacity-80`} />
