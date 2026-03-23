@@ -1,6 +1,11 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Zoom, Virtual } from 'swiper/modules';
+import type { Swiper as SwiperType } from 'swiper';
+import 'swiper/css';
+import 'swiper/css/zoom';
 
 interface PhotoItem {
   id: string;
@@ -21,15 +26,16 @@ export default function PhotoViewer({
   onDelete?: (photoId: string) => void;
 }) {
   const [index, setIndex] = useState(initialIndex);
+  const swiperRef = useRef<SwiperType | null>(null);
   const photo = photos[index];
 
   const prev = useCallback(() => {
-    setIndex((i) => (i > 0 ? i - 1 : photos.length - 1));
-  }, [photos.length]);
+    swiperRef.current?.slidePrev();
+  }, []);
 
   const next = useCallback(() => {
-    setIndex((i) => (i < photos.length - 1 ? i + 1 : 0));
-  }, [photos.length]);
+    swiperRef.current?.slideNext();
+  }, []);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -45,8 +51,6 @@ export default function PhotoViewer({
     };
   }, [onClose, prev, next]);
 
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-
   const handleDownload = () => {
     const link = document.createElement('a');
     link.href = photo.url;
@@ -55,18 +59,9 @@ export default function PhotoViewer({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center"
-      onTouchStart={(e) => setTouchStart(e.touches[0].clientX)}
-      onTouchEnd={(e) => {
-        if (touchStart === null) return;
-        const diff = e.changedTouches[0].clientX - touchStart;
-        if (Math.abs(diff) > 50) { diff > 0 ? prev() : next(); }
-        setTouchStart(null);
-      }}
-    >
+    <div className="fixed inset-0 z-[100] bg-black flex flex-col">
       {/* Top bar */}
-      <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 z-10 bg-gradient-to-b from-black/50 to-transparent">
+      <div className="flex items-center justify-between p-4 z-10 shrink-0">
         <span className="text-white/80 text-sm font-semibold bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full">
           {index + 1} / {photos.length}
         </span>
@@ -80,7 +75,7 @@ export default function PhotoViewer({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
           </button>
-          {photo.canDelete && onDelete && (
+          {photo?.canDelete && onDelete && (
             <button
               onClick={() => {
                 if (confirm('이 사진을 삭제하시겠습니까?')) {
@@ -108,30 +103,51 @@ export default function PhotoViewer({
         </div>
       </div>
 
-      {/* Nav buttons */}
-      <button
-        onClick={prev}
-        className="absolute left-3 p-3 text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-full transition-colors hidden sm:block"
-      >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
-      </button>
-      <button
-        onClick={next}
-        className="absolute right-3 p-3 text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-full transition-colors hidden sm:block"
-      >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
+      {/* Swiper */}
+      <div className="flex-1 min-h-0 relative">
+        <Swiper
+          modules={[Zoom, Virtual]}
+          zoom={true}
+          virtual
+          initialSlide={initialIndex}
+          spaceBetween={0}
+          slidesPerView={1}
+          onSwiper={(swiper) => { swiperRef.current = swiper; }}
+          onSlideChange={(swiper) => setIndex(swiper.activeIndex)}
+          className="w-full h-full"
+        >
+          {photos.map((p, i) => (
+            <SwiperSlide key={p.id} virtualIndex={i}>
+              <div className="swiper-zoom-container flex items-center justify-center w-full h-full">
+                <img
+                  src={p.url}
+                  alt=""
+                  className="max-w-full max-h-full object-contain select-none"
+                  draggable={false}
+                />
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
 
-      <img
-        src={photo.url}
-        alt=""
-        className="max-w-full max-h-full object-contain select-none"
-        draggable={false}
-      />
+        {/* Desktop nav buttons */}
+        <button
+          onClick={prev}
+          className="absolute left-3 top-1/2 -translate-y-1/2 z-10 p-3 text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-full transition-colors hidden sm:block"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <button
+          onClick={next}
+          className="absolute right-3 top-1/2 -translate-y-1/2 z-10 p-3 text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-full transition-colors hidden sm:block"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
     </div>
   );
 }

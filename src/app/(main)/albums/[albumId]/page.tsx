@@ -6,6 +6,7 @@ import PhotoGrid from '@/components/PhotoGrid';
 import CommentSection from '@/components/CommentSection';
 import AlbumActions from '@/components/AlbumActions';
 import ZipDownloadButton from '@/components/ZipDownloadButton';
+import ExpandableText from '@/components/ExpandableText';
 
 export const dynamic = 'force-dynamic';
 
@@ -65,7 +66,7 @@ export default async function AlbumPage({
           <div>
             <h1 className="text-xl font-extrabold text-[var(--text)]">{album.title}</h1>
             {album.description && (
-              <p className="text-[var(--text-sub)] text-sm mt-1">{album.description}</p>
+              <ExpandableText text={album.description} />
             )}
             <div className="flex items-center gap-3 mt-2 text-sm text-[var(--text-sub)]">
               <span>{formatDate(album.event_date)}</span>
