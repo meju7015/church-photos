@@ -169,8 +169,6 @@ export default function Navigation({ user }: { user: User }) {
         </div>
       </div>
 
-      {/* Bottom padding for mobile tab bar + safe area */}
-      <div className="h-16 sm:hidden" />
     </>
   );
 }
