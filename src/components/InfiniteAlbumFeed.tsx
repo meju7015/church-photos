@@ -24,43 +24,64 @@ export default function InfiniteAlbumFeed({
   const [hasMore, setHasMore] = useState(initialAlbums.length >= 12);
   const [loading, setLoading] = useState(false);
   const loaderRef = useRef<HTMLDivElement>(null);
+  const loadingRef = useRef(false);
+  const hasMoreRef = useRef(hasMore);
 
-  // 검색어 변경 시 리셋
   useEffect(() => {
     setAlbums(initialAlbums);
     setHasMore(initialAlbums.length >= 12);
+    hasMoreRef.current = initialAlbums.length >= 12;
   }, [initialAlbums]);
 
+  useEffect(() => { hasMoreRef.current = hasMore; }, [hasMore]);
+
   const loadMore = useCallback(async () => {
-    if (loading || !hasMore) return;
+    if (loadingRef.current || !hasMoreRef.current) return;
+    loadingRef.current = true;
     setLoading(true);
 
-    const lastAlbum = albums[albums.length - 1];
-    const params = new URLSearchParams({
-      cursor: lastAlbum.created_at,
-      limit: '12',
+    setAlbums((prev) => {
+      const lastAlbum = prev[prev.length - 1];
+      if (!lastAlbum) return prev;
+
+      const params = new URLSearchParams({
+        cursor: lastAlbum.created_at,
+        limit: '12',
+      });
+      if (search) params.set('search', search);
+
+      fetch(`/api/albums?${params}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.albums?.length) {
+            setAlbums((p) => [...p, ...data.albums]);
+          }
+          setHasMore(data.hasMore ?? false);
+          hasMoreRef.current = data.hasMore ?? false;
+        })
+        .finally(() => {
+          loadingRef.current = false;
+          setLoading(false);
+        });
+
+      return prev;
     });
-    if (search) params.set('search', search);
-
-    const res = await fetch(`/api/albums?${params}`);
-    const data = await res.json();
-
-    if (data.albums) {
-      setAlbums((prev) => [...prev, ...data.albums]);
-      setHasMore(data.hasMore);
-    }
-    setLoading(false);
-  }, [albums, hasMore, loading, search]);
+  }, [search]);
 
   useEffect(() => {
+    const el = loaderRef.current;
+    if (!el) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) loadMore();
+        if (entries[0].isIntersecting && !loadingRef.current) {
+          loadMore();
+        }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1, rootMargin: '100px' }
     );
 
-    if (loaderRef.current) observer.observe(loaderRef.current);
+    observer.observe(el);
     return () => observer.disconnect();
   }, [loadMore]);
 
@@ -88,7 +109,6 @@ export default function InfiniteAlbumFeed({
         ))}
       </div>
 
-      {/* 로더 트리거 */}
       {hasMore && (
         <div ref={loaderRef} className="flex justify-center py-8">
           {loading && (
