@@ -1,20 +1,22 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 type Mode = 'login' | 'signup';
 
 export default function LoginPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const authError = searchParams.get('error');
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('error')) setError('로그인에 실패했습니다. 다시 시도해주세요.');
+  }, []);
 
   const [mode, setMode] = useState<Mode>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [error, setError] = useState(authError ? '로그인에 실패했습니다. 다시 시도해주세요.' : '');
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleKakaoLogin = () => {
@@ -102,10 +104,10 @@ export default function LoginPage() {
               />
             )}
             <input
-              type="email"
+              type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="이메일"
+              placeholder="아이디 또는 이메일"
               required
               className="w-full px-4 py-3 bg-[var(--bg)] border border-[var(--border)] rounded-2xl text-sm focus:ring-2 focus:ring-candy-purple focus:border-transparent outline-none text-[var(--text)] placeholder-[var(--text-sub)]"
             />
