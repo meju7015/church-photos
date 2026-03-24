@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { formatDateTime } from '@/lib/utils';
+import { useConfirm } from '@/components/ConfirmDialog';
+import { useToast } from '@/hooks/useToast';
 
 interface UserData {
   id: string;
@@ -21,6 +23,8 @@ const roleLabels: Record<string, string> = {
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<UserData[]>([]);
   const [loading, setLoading] = useState(true);
+  const confirm = useConfirm();
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetch = async () => {
@@ -43,6 +47,26 @@ export default function AdminUsersPage() {
     });
     if (res.ok) {
       setUsers((prev) => prev.map((u) => u.id === userId ? { ...u, role: newRole } : u));
+      toast('역할이 변경되었습니다', 'success');
+    }
+  };
+
+  const handleDelete = async (user: UserData) => {
+    const ok = await confirm({
+      title: '사용자 삭제',
+      message: `"${user.name}"님을 삭제하시겠습니까?\n모든 반 배정과 계정이 영구 삭제됩니다.`,
+      confirmText: '삭제',
+      danger: true,
+    });
+    if (!ok) return;
+
+    const res = await window.fetch(`/api/admin/users/${user.id}`, { method: 'DELETE' });
+    if (res.ok) {
+      setUsers((prev) => prev.filter((u) => u.id !== user.id));
+      toast('사용자가 삭제되었습니다', 'success');
+    } else {
+      const data = await res.json();
+      toast(data.error || '삭제에 실패했습니다', 'error');
     }
   };
 
@@ -67,15 +91,26 @@ export default function AdminUsersPage() {
                   <p className="text-xs text-[var(--text-sub)]">{formatDateTime(user.created_at)}</p>
                 </div>
               </div>
-              <select
-                value={user.role}
-                onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                className="px-3 py-1.5 bg-[var(--bg)] border border-[var(--border)] rounded-xl text-xs font-semibold text-[var(--text)] outline-none focus:ring-2 focus:ring-candy-purple"
-              >
-                <option value="parent">학부모</option>
-                <option value="teacher">선생님</option>
-                <option value="admin">관리자</option>
-              </select>
+              <div className="flex items-center gap-2">
+                <select
+                  value={user.role}
+                  onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                  className="px-3 py-1.5 bg-[var(--bg)] border border-[var(--border)] rounded-xl text-xs font-semibold text-[var(--text)] outline-none focus:ring-2 focus:ring-candy-purple pr-7"
+                >
+                  <option value="parent">학부모</option>
+                  <option value="teacher">선생님</option>
+                  <option value="admin">관리자</option>
+                </select>
+                <button
+                  onClick={() => handleDelete(user)}
+                  className="p-1.5 rounded-lg hover:bg-candy-red/10 text-[var(--text-sub)] hover:text-candy-red transition-colors"
+                  title="삭제"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
             </div>
             {user.user_classes.length > 0 && (
               <div className="flex flex-wrap gap-1 mt-2 ml-13">
