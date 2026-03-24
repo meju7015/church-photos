@@ -44,20 +44,20 @@ export default async function HomePage() {
     likes: allLikes?.filter((l) => l.album_id === album.id) || [],
   })) || [];
 
-  // 고정 공지사항 조회
-  const { data: pinnedAnnouncements } = await adminSb
+  // 공지사항 조회 (고정 우선, 최근순)
+  const { data: recentAnnouncements } = await adminSb
     .from('announcements')
-    .select('id, title, content')
-    .eq('pinned', true)
+    .select('id, title, content, pinned')
+    .order('pinned', { ascending: false })
     .order('created_at', { ascending: false })
-    .limit(3);
+    .limit(5);
 
   const verse = getDailyVerse();
 
   return (
     <div className="space-y-5">
       {/* 배너 (오늘의 말씀 + 공지사항 슬라이드) */}
-      <HomeBanner verse={verse} announcements={pinnedAnnouncements || []} />
+      <HomeBanner verse={verse} announcements={recentAnnouncements || []} />
 
       {/* 내 반 */}
       <div>

@@ -11,6 +11,7 @@ interface Announcement {
   id: string;
   title: string;
   content: string;
+  pinned?: boolean;
 }
 
 export default function HomeBanner({
@@ -95,8 +96,9 @@ export default function HomeBanner({
                 <p className="text-white/60 text-xs mt-1.5 text-right">{verse.ref}</p>
               </div>
             ) : (
-              <div className="bg-gradient-to-r from-candy-orange to-candy-yellow p-5 pb-7 text-white h-full flex flex-col justify-center">
+              <div className={`${slide.data!.pinned ? 'bg-gradient-to-r from-candy-orange to-candy-yellow' : 'bg-gradient-to-r from-candy-blue to-candy-purple'} p-5 pb-7 text-white h-full flex flex-col justify-center`}>
                 <div className="flex items-center gap-1.5 mb-1.5">
+                  {slide.data!.pinned && <span className="text-white/90 text-[10px] font-bold bg-white/20 px-1.5 py-0.5 rounded">고정</span>}
                   <p className="text-white/70 text-xs font-semibold">공지사항</p>
                   <span className="text-white/50 text-[10px]">자세히 보기</span>
                 </div>
