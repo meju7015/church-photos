@@ -6,7 +6,7 @@ export async function GET() {
   const adminSb = createAdminClient();
   const { data, error } = await adminSb
     .from('announcements')
-    .select('*, creator:users!announcements_created_by_fkey(name), department:departments(name)')
+    .select('*, creator:users(name), department:departments(name)')
     .order('pinned', { ascending: false })
     .order('created_at', { ascending: false })
     .limit(50);
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
       pinned: pinned || false,
       created_by: user.id,
     })
-    .select('*, creator:users!announcements_created_by_fkey(name), department:departments(name)')
+    .select('*, creator:users(name), department:departments(name)')
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
