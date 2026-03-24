@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function JoinPage() {
@@ -9,6 +9,21 @@ export default function JoinPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    // URL 파라미터 또는 쿠키에서 초대코드 자동 입력
+    const params = new URLSearchParams(window.location.search);
+    const urlCode = params.get('code');
+    if (urlCode) {
+      setCode(urlCode.toUpperCase());
+      return;
+    }
+    const cookie = document.cookie.split('; ').find((c) => c.startsWith('invite_code='));
+    if (cookie) {
+      setCode(cookie.split('=')[1].toUpperCase());
+      document.cookie = 'invite_code=;path=/;max-age=0';
+    }
+  }, []);
 
   const handleJoin = async (e: React.FormEvent) => {
     e.preventDefault();

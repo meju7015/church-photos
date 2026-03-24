@@ -10,6 +10,10 @@ export default function LoginPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('error')) setError('로그인에 실패했습니다. 다시 시도해주세요.');
+    const inviteCode = params.get('code');
+    if (inviteCode) {
+      document.cookie = `invite_code=${inviteCode};path=/;max-age=3600`;
+    }
   }, []);
 
   const [mode, setMode] = useState<Mode>('login');

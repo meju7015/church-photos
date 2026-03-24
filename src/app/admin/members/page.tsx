@@ -83,6 +83,12 @@ export default function AdminMembersPage() {
     toast('초대코드가 복사되었습니다', 'success');
   };
 
+  const copyInviteLink = (code: string) => {
+    const url = `${window.location.origin}/login?code=${code}`;
+    navigator.clipboard.writeText(url);
+    toast('초대 링크가 복사되었습니다', 'success');
+  };
+
   return (
     <div>
       <h1 className="text-xl font-extrabold text-[var(--text)] mb-6">학부모 관리</h1>
@@ -143,7 +149,13 @@ export default function AdminMembersPage() {
                     onClick={() => copyCode(newCode)}
                     className="px-3 py-1 bg-candy-green text-white rounded-lg text-xs font-bold"
                   >
-                    복사
+                    코드 복사
+                  </button>
+                  <button
+                    onClick={() => copyInviteLink(newCode)}
+                    className="px-3 py-1 bg-candy-purple text-white rounded-lg text-xs font-bold"
+                  >
+                    링크 복사
                   </button>
                 </div>
                 <p className="text-xs text-candy-green/70 mt-1">7일간 유효합니다</p>
@@ -169,12 +181,20 @@ export default function AdminMembersPage() {
                     ) : new Date(ic.expires_at) < new Date() ? (
                       <span className="text-xs text-candy-red">만료</span>
                     ) : (
-                      <button
-                        onClick={() => copyCode(ic.code)}
-                        className="text-xs text-candy-purple hover:underline"
-                      >
-                        복사
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => copyCode(ic.code)}
+                          className="text-xs text-candy-purple hover:underline"
+                        >
+                          코드
+                        </button>
+                        <button
+                          onClick={() => copyInviteLink(ic.code)}
+                          className="text-xs text-candy-blue hover:underline"
+                        >
+                          링크
+                        </button>
+                      </div>
                     )}
                   </div>
                 </div>
