@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
 
 export default function JoinClassPage() {
   const [code, setCode] = useState('');
@@ -18,40 +17,16 @@ export default function JoinClassPage() {
     setLoading(true);
 
     try {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { setError('로그인이 필요합니다.'); return; }
-
-      const { data: invite } = await supabase
-        .from('invite_codes')
-        .select('*, class:classes(*, department:departments(*))')
-        .eq('code', code.toUpperCase())
-        .is('used_by', null)
-        .single();
-
-      if (!invite) { setError('유효하지 않은 초대코드입니다.'); return; }
-      if (new Date(invite.expires_at) < new Date()) { setError('만료된 초대코드입니다.'); return; }
-
-      // 이미 배정 확인
-      const { data: existing } = await supabase
-        .from('user_classes')
-        .select('class_id')
-        .eq('user_id', user.id)
-        .eq('class_id', invite.class_id)
-        .single();
-
-      if (existing) { setError('이미 이 반에 소속되어 있습니다.'); return; }
-
-      await supabase.from('user_classes').insert({
-        user_id: user.id,
-        class_id: invite.class_id,
-        role: invite.role,
+      const res = await fetch('/api/auth/join-class', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: code.toUpperCase() }),
       });
 
-      await supabase.from('invite_codes').update({ used_by: user.id }).eq('id', invite.id);
+      const data = await res.json();
+      if (!res.ok) { setError(data.error); return; }
 
-      const cls = invite.class as any;
-      setSuccess(`${cls?.department?.name} - ${cls?.name}에 추가되었습니다!`);
+      setSuccess(`${data.className}에 추가되었습니다!`);
       setCode('');
       setTimeout(() => router.push('/'), 1500);
     } catch {

@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
 
 export default function JoinPage() {
   const [code, setCode] = useState('');
@@ -17,31 +16,18 @@ export default function JoinPage() {
     setLoading(true);
 
     try {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { setError('로그인이 필요합니다.'); return; }
+      const res = await fetch('/api/auth/join', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: code.toUpperCase(), name }),
+      });
 
-      const { data: invite, error: inviteErr } = await supabase
-        .from('invite_codes')
-        .select('*, class:classes(*, department:departments(*))')
-        .eq('code', code.toUpperCase())
-        .is('used_by', null)
-        .single();
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error);
+        return;
+      }
 
-      if (inviteErr || !invite) { setError('유효하지 않은 초대코드입니다.'); return; }
-      if (new Date(invite.expires_at) < new Date()) { setError('만료된 초대코드입니다.'); return; }
-
-      const { error: profileErr } = await supabase
-        .from('users')
-        .upsert({ id: user.id, name, kakao_id: user.user_metadata?.provider_id || null, avatar_url: user.user_metadata?.avatar_url || null, role: invite.role });
-      if (profileErr) { setError('프로필 생성에 실패했습니다.'); return; }
-
-      const { error: classErr } = await supabase
-        .from('user_classes')
-        .upsert({ user_id: user.id, class_id: invite.class_id, role: invite.role });
-      if (classErr) { setError('반 배정에 실패했습니다.'); return; }
-
-      await supabase.from('invite_codes').update({ used_by: user.id }).eq('id', invite.id);
       router.push('/');
     } catch {
       setError('오류가 발생했습니다.');
