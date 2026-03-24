@@ -66,39 +66,38 @@ export default function HomeBanner({
   };
 
   return (
-    <div className="mb-2 relative overflow-hidden rounded-3xl shadow-lg shadow-candy-purple/20">
-      <div
-        className="flex transition-transform duration-300 ease-out"
-        style={{
-          transform: `translateX(calc(-${current * 100}% + ${swiping ? touchDelta : 0}px))`,
-          transition: swiping ? 'none' : undefined,
-        }}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
-        {slides.map((slide, i) => (
-          <div key={i} className="w-full shrink-0">
-            {slide.type === 'verse' ? (
-              <div className="gradient-candy p-6 text-white">
-                <p className="text-white/70 text-xs font-semibold mb-2">오늘의 말씀</p>
-                <p className="text-base font-bold leading-relaxed">{verse.text}</p>
-                <p className="text-white/60 text-xs mt-2 text-right">{verse.ref}</p>
-              </div>
-            ) : (
-              <div className="bg-gradient-to-r from-candy-orange to-candy-yellow p-6 text-white">
-                <p className="text-white/70 text-xs font-semibold mb-2">공지사항</p>
-                <p className="text-base font-bold leading-relaxed">{slide.data!.title}</p>
-                <p className="text-white/80 text-sm mt-2 line-clamp-3 whitespace-pre-line">{slide.data!.content}</p>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+    <div
+      className="mb-2 relative overflow-hidden rounded-3xl shadow-lg shadow-candy-purple/20"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      {slides.map((slide, i) => (
+        <div
+          key={i}
+          className={`w-full transition-opacity duration-300 ${
+            i === current ? 'relative opacity-100' : 'absolute inset-0 opacity-0 pointer-events-none'
+          }`}
+        >
+          {slide.type === 'verse' ? (
+            <div className="gradient-candy p-6 text-white">
+              <p className="text-white/70 text-xs font-semibold mb-2">오늘의 말씀</p>
+              <p className="text-base font-bold leading-relaxed">{verse.text}</p>
+              <p className="text-white/60 text-xs mt-2 text-right">{verse.ref}</p>
+            </div>
+          ) : (
+            <div className="bg-gradient-to-r from-candy-orange to-candy-yellow p-6 text-white">
+              <p className="text-white/70 text-xs font-semibold mb-2">공지사항</p>
+              <p className="text-base font-bold leading-relaxed">{slide.data!.title}</p>
+              <p className="text-white/80 text-sm mt-2 line-clamp-3 whitespace-pre-line">{slide.data!.content}</p>
+            </div>
+          )}
+        </div>
+      ))}
 
       {/* 인디케이터 */}
       {total > 1 && (
-        <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex gap-1.5">
+        <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
           {slides.map((_, i) => (
             <button
               key={i}
