@@ -68,24 +68,22 @@ export default async function AdminAlbumsPage({
       </div>
 
       {/* 날짜 필터 */}
-      <div className="flex flex-wrap gap-2 mb-4">
-        <form className="flex items-center gap-2" action="/admin/albums">
+      <div className="mb-4">
+        <form className="flex flex-wrap items-center gap-2" action="/admin/albums">
           {params.dept && <input type="hidden" name="dept" value={params.dept} />}
           {params.search && <input type="hidden" name="search" value={params.search} />}
           <input
             type="date"
             name="from"
             defaultValue={params.from || ''}
-            className="px-3 py-1.5 bg-[var(--surface-card)] border border-[var(--border)] rounded-xl text-xs text-[var(--text)] outline-none"
-            placeholder="시작일"
+            className="flex-1 min-w-0 px-3 py-1.5 bg-[var(--surface-card)] border border-[var(--border)] rounded-xl text-xs text-[var(--text)] outline-none"
           />
           <span className="text-[var(--text-sub)] text-xs">~</span>
           <input
             type="date"
             name="to"
             defaultValue={params.to || ''}
-            className="px-3 py-1.5 bg-[var(--surface-card)] border border-[var(--border)] rounded-xl text-xs text-[var(--text)] outline-none"
-            placeholder="종료일"
+            className="flex-1 min-w-0 px-3 py-1.5 bg-[var(--surface-card)] border border-[var(--border)] rounded-xl text-xs text-[var(--text)] outline-none"
           />
           <button
             type="submit"

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 
 export async function PATCH(
   request: Request,
@@ -22,7 +23,8 @@ export async function PATCH(
     return NextResponse.json({ error: 'Invalid role' }, { status: 400 });
   }
 
-  const { error } = await supabase.from('users').update({ role }).eq('id', userId);
+  const adminSb = createAdminClient();
+  const { error } = await adminSb.from('users').update({ role }).eq('id', userId);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   return NextResponse.json({ ok: true });
