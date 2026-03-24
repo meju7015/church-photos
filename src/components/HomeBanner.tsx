@@ -36,7 +36,6 @@ export default function HomeBanner({
     setCurrent(Math.max(0, Math.min(idx, total - 1)));
   }, [total]);
 
-  // 자동 슬라이드 (5초)
   useEffect(() => {
     if (total <= 1) return;
     const timer = setInterval(() => {
@@ -67,7 +66,7 @@ export default function HomeBanner({
 
   return (
     <div
-      className="mb-2 relative overflow-hidden rounded-3xl shadow-lg shadow-candy-purple/20"
+      className="mb-2 relative overflow-hidden rounded-3xl shadow-lg shadow-candy-purple/20 h-[140px]"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -75,29 +74,28 @@ export default function HomeBanner({
       {slides.map((slide, i) => (
         <div
           key={i}
-          className={`w-full transition-opacity duration-300 ${
-            i === current ? 'relative opacity-100' : 'absolute inset-0 opacity-0 pointer-events-none'
+          className={`absolute inset-0 transition-opacity duration-500 ${
+            i === current ? 'opacity-100' : 'opacity-0 pointer-events-none'
           }`}
         >
           {slide.type === 'verse' ? (
-            <div className="gradient-candy p-6 text-white">
-              <p className="text-white/70 text-xs font-semibold mb-2">오늘의 말씀</p>
-              <p className="text-base font-bold leading-relaxed">{verse.text}</p>
-              <p className="text-white/60 text-xs mt-2 text-right">{verse.ref}</p>
+            <div className="gradient-candy p-5 pb-7 text-white h-full flex flex-col justify-center">
+              <p className="text-white/70 text-xs font-semibold mb-1.5">오늘의 말씀</p>
+              <p className="text-sm font-bold leading-relaxed line-clamp-3">{verse.text}</p>
+              <p className="text-white/60 text-xs mt-1.5 text-right">{verse.ref}</p>
             </div>
           ) : (
-            <div className="bg-gradient-to-r from-candy-orange to-candy-yellow p-6 text-white">
-              <p className="text-white/70 text-xs font-semibold mb-2">공지사항</p>
-              <p className="text-base font-bold leading-relaxed">{slide.data!.title}</p>
-              <p className="text-white/80 text-sm mt-2 line-clamp-3 whitespace-pre-line">{slide.data!.content}</p>
+            <div className="bg-gradient-to-r from-candy-orange to-candy-yellow p-5 pb-7 text-white h-full flex flex-col justify-center">
+              <p className="text-white/70 text-xs font-semibold mb-1.5">공지사항</p>
+              <p className="text-sm font-bold leading-relaxed line-clamp-1">{slide.data!.title}</p>
+              <p className="text-white/80 text-xs mt-1.5 line-clamp-2 whitespace-pre-line">{slide.data!.content}</p>
             </div>
           )}
         </div>
       ))}
 
-      {/* 인디케이터 */}
       {total > 1 && (
-        <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
           {slides.map((_, i) => (
             <button
               key={i}
