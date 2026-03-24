@@ -17,6 +17,7 @@ export default function CommentSection({
   const [comments, setComments] = useState(initialComments);
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,9 +39,11 @@ export default function CommentSection({
   };
 
   const handleDelete = async (commentId: string) => {
+    setDeletingId(commentId);
     const supabase = createClient();
     await supabase.from('comments').delete().eq('id', commentId);
     setComments((prev) => prev.filter((c) => c.id !== commentId));
+    setDeletingId(null);
   };
 
   return (
@@ -62,12 +65,19 @@ export default function CommentSection({
                   {formatDateTime(comment.created_at)}
                 </span>
                 {comment.user_id === currentUserId && (
-                  <button
-                    onClick={() => handleDelete(comment.id)}
-                    className="text-xs text-candy-red/60 hover:text-candy-red"
-                  >
-                    삭제
-                  </button>
+                  deletingId === comment.id ? (
+                    <svg className="w-3 h-3 animate-spin text-candy-red" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                  ) : (
+                    <button
+                      onClick={() => handleDelete(comment.id)}
+                      className="text-xs text-candy-red/60 hover:text-candy-red"
+                    >
+                      삭제
+                    </button>
+                  )
                 )}
               </div>
               <CommentContent content={comment.content} />

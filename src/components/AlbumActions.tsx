@@ -25,6 +25,7 @@ export default function AlbumActions({
   const [description, setDescription] = useState(albumDescription);
   const [eventDate, setEventDate] = useState(albumEventDate);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const handleEdit = async () => {
     setSaving(true);
@@ -51,12 +52,14 @@ export default function AlbumActions({
       danger: true,
     });
     if (!ok) return;
+    setDeleting(true);
     const res = await fetch(`/api/albums/${albumId}`, { method: 'DELETE' });
     if (res.ok) {
       toast('앨범이 삭제되었습니다', 'success');
       router.push('/');
     } else {
       toast('삭제에 실패했습니다', 'error');
+      setDeleting(false);
     }
   };
 
@@ -91,6 +94,18 @@ export default function AlbumActions({
             취소
           </button>
         </div>
+      </div>
+    );
+  }
+
+  if (deleting) {
+    return (
+      <div className="flex items-center gap-2 text-xs text-[var(--text-sub)]">
+        <svg className="w-4 h-4 animate-spin text-candy-red" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+        </svg>
+        삭제 중...
       </div>
     );
   }

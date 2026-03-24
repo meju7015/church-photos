@@ -19,6 +19,7 @@ export default function AdminMembersPage() {
   const [inviteRole, setInviteRole] = useState<'parent' | 'teacher'>('parent');
   const [inviteCodes, setInviteCodes] = useState<InviteCode[]>([]);
   const [members, setMembers] = useState<any[]>([]);
+  const [removingId, setRemovingId] = useState<string | null>(null);
   const [newCode, setNewCode] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -191,7 +192,7 @@ export default function AdminMembersPage() {
             </h2>
             <div className="space-y-2">
               {members.map((m) => (
-                <div key={m.user_id} className="flex items-center justify-between p-3 bg-[var(--bg)] rounded-xl">
+                <div key={m.user_id} className={`flex items-center justify-between p-3 bg-[var(--bg)] rounded-xl transition-opacity ${removingId === m.user_id ? 'opacity-50' : ''}`}>
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-xl gradient-candy flex items-center justify-center text-xs font-bold text-white">
                       {m.user?.name?.charAt(0) || '?'}
@@ -202,19 +203,28 @@ export default function AdminMembersPage() {
                     <span className="text-xs text-[var(--text-sub)]">
                       {m.role === 'teacher' ? '선생님' : '학부모'}
                     </span>
-                    <button
-                      onClick={async () => {
-                        const ok = await confirm({ message: `${m.user?.name}님을 이 반에서 제거하시겠습니까?`, confirmText: '제거', danger: true });
-                        if (!ok) return;
-                        const supabase = createClient();
-                        await supabase.from('user_classes').delete().eq('user_id', m.user_id).eq('class_id', selectedClass);
-                        setMembers((prev) => prev.filter((x) => x.user_id !== m.user_id));
-                        toast('멤버가 제거되었습니다', 'success');
-                      }}
-                      className="text-xs text-candy-red/60 hover:text-candy-red"
-                    >
-                      제거
-                    </button>
+                    {removingId === m.user_id ? (
+                      <svg className="w-4 h-4 animate-spin text-candy-red" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                      </svg>
+                    ) : (
+                      <button
+                        onClick={async () => {
+                          const ok = await confirm({ message: `${m.user?.name}님을 이 반에서 제거하시겠습니까?`, confirmText: '제거', danger: true });
+                          if (!ok) return;
+                          setRemovingId(m.user_id);
+                          const supabase = createClient();
+                          await supabase.from('user_classes').delete().eq('user_id', m.user_id).eq('class_id', selectedClass);
+                          setMembers((prev) => prev.filter((x) => x.user_id !== m.user_id));
+                          toast('멤버가 제거되었습니다', 'success');
+                          setRemovingId(null);
+                        }}
+                        className="text-xs text-candy-red/60 hover:text-candy-red"
+                      >
+                        제거
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
