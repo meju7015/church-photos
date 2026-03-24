@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import { usePhotoUpload } from '@/hooks/usePhotoUpload';
 import type { Department, Class } from '@/types';
 
-const inputClass = "w-full px-4 py-2.5 bg-[var(--bg)] border border-[var(--border)] rounded-2xl focus:ring-2 focus:ring-candy-purple focus:border-transparent outline-none text-[var(--text)] placeholder-[var(--text-sub)]";
+const inputClass = "w-full px-4 pr-10 py-2.5 bg-[var(--bg)] border border-[var(--border)] rounded-2xl focus:ring-2 focus:ring-candy-purple focus:border-transparent outline-none text-[var(--text)] placeholder-[var(--text-sub)]";
 const labelClass = "block text-sm font-semibold text-[var(--text)] mb-1.5";
 
 export default function AdminUploadPage() {

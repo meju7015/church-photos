@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 import { generateInviteCode } from '@/lib/utils';
 import type { Department, Class, InviteCode } from '@/types';
 
-const inputClass = "px-4 py-2.5 bg-[var(--bg)] border border-[var(--border)] rounded-2xl focus:ring-2 focus:ring-candy-purple outline-none text-[var(--text)] placeholder-[var(--text-sub)]";
+const inputClass = "px-4 pr-10 py-2.5 bg-[var(--bg)] border border-[var(--border)] rounded-2xl focus:ring-2 focus:ring-candy-purple outline-none text-[var(--text)] placeholder-[var(--text-sub)]";
 
 export default function AdminMembersPage() {
   const [departments, setDepartments] = useState<Department[]>([]);
