@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { usePhotoUpload } from '@/hooks/usePhotoUpload';
+import { useToast } from '@/hooks/useToast';
 import type { Department, Class } from '@/types';
 
 const inputClass = "w-full px-4 pr-7 py-2.5 bg-[var(--bg)] border border-[var(--border)] rounded-2xl focus:ring-2 focus:ring-candy-purple focus:border-transparent outline-none text-[var(--text)] placeholder-[var(--text-sub)]";
@@ -11,6 +12,7 @@ const labelClass = "block text-sm font-semibold text-[var(--text)] mb-1.5";
 
 export default function AdminUploadPage() {
   const router = useRouter();
+  const { toast } = useToast();
   const { files, previews, uploading, progress, error: uploadError, addFiles, removeFile, upload } = usePhotoUpload();
   const [departments, setDepartments] = useState<Department[]>([]);
   const [classes, setClasses] = useState<Class[]>([]);
@@ -54,7 +56,7 @@ export default function AdminUploadPage() {
       .select()
       .single();
 
-    if (albumErr || !album) { alert('앨범 생성에 실패했습니다.'); return; }
+    if (albumErr || !album) { toast('앨범 생성에 실패했습니다', 'error'); return; }
 
     const success = await upload({ albumId: album.id, classId: selectedClass });
     if (!success) return;

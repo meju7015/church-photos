@@ -23,14 +23,14 @@ export default function CommentSection({
     if (!content.trim()) return;
     setLoading(true);
 
-    const supabase = createClient();
-    const { data, error } = await supabase
-      .from('comments')
-      .insert({ album_id: albumId, user_id: currentUserId, content: content.trim() })
-      .select('*, user:users(*)')
-      .single();
+    const res = await fetch('/api/comments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ album_id: albumId, content: content.trim() }),
+    });
 
-    if (!error && data) {
+    if (res.ok) {
+      const data = await res.json();
       setComments((prev) => [...prev, data]);
       setContent('');
     }

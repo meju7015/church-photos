@@ -5,6 +5,7 @@ import InfiniteAlbumFeed from '@/components/InfiniteAlbumFeed';
 import SearchBar from '@/components/SearchBar';
 import { getDailyVerse } from '@/lib/bible-verses';
 import { createAdminClient } from '@/lib/supabase/admin';
+import AnnouncementBanner from '@/components/AnnouncementBanner';
 
 export const dynamic = 'force-dynamic';
 
@@ -55,8 +56,21 @@ export default async function HomePage({
     likes: allLikes?.filter((l) => l.album_id === album.id) || [],
   })) || [];
 
+  // 고정 공지사항 조회
+  const { data: pinnedAnnouncements } = await adminSb
+    .from('announcements')
+    .select('id, title, content')
+    .eq('pinned', true)
+    .order('created_at', { ascending: false })
+    .limit(3);
+
   return (
     <div>
+      {/* 고정 공지 */}
+      {pinnedAnnouncements && pinnedAnnouncements.length > 0 && (
+        <AnnouncementBanner announcements={pinnedAnnouncements} />
+      )}
+
       {/* 오늘의 말씀 */}
       {(() => {
         const verse = getDailyVerse();
@@ -71,7 +85,12 @@ export default async function HomePage({
 
       {/* 내 반 */}
       <div className="mb-6">
-        <h2 className="text-base font-bold text-[var(--text)] mb-3">내 반</h2>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-base font-bold text-[var(--text)]">내 반</h2>
+          <Link href="/departments" className="text-xs font-semibold text-candy-purple hover:underline">
+            전체 부서 보기
+          </Link>
+        </div>
         <div className="flex flex-wrap gap-2">
           {userClasses?.map((uc) => {
             const cls = uc.class as any;

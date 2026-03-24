@@ -67,12 +67,15 @@ export default function InfiniteAlbumFeed({
   if (albums.length === 0) {
     return (
       <div className="text-center py-16 bg-[var(--surface-card)] rounded-3xl border border-[var(--border)]">
-        <p className="text-[var(--text-sub)]">
+        <div className="text-4xl mb-3">
+          {search ? '🔍' : '📷'}
+        </div>
+        <p className="text-sm font-semibold text-[var(--text-sub)]">
           {search ? `"${search}"에 대한 결과가 없습니다` : '아직 앨범이 없습니다'}
         </p>
-        {!search && (
-          <p className="text-xs text-[var(--text-sub)] mt-1">선생님이 사진을 올리면 여기에 나타나요!</p>
-        )}
+        <p className="text-xs text-[var(--text-sub)] mt-1.5">
+          {search ? '다른 검색어로 시도해보세요' : '선생님이 사진을 올리면 여기에 나타나요!'}
+        </p>
       </div>
     );
   }

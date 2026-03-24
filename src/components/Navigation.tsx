@@ -154,18 +154,18 @@ export default function Navigation({ user }: { user: User }) {
             </Link>
           )}
 
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
+          <Link
+            href="/profile"
             className={cn(
               'flex flex-col items-center gap-0.5 px-4 py-1.5 rounded-xl transition-colors',
-              'text-[var(--text-sub)]'
+              pathname === '/profile' ? 'text-candy-purple' : 'text-[var(--text-sub)]'
             )}
           >
             <div className="w-5 h-5 rounded-full gradient-candy flex items-center justify-center text-[9px] font-bold text-white">
               {user.name.charAt(0)}
             </div>
             <span className="text-[10px] font-semibold">내정보</span>
-          </button>
+          </Link>
         </div>
       </div>
 

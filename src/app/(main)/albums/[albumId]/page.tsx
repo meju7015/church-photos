@@ -9,6 +9,7 @@ import AlbumActions from '@/components/AlbumActions';
 import ZipDownloadButton from '@/components/ZipDownloadButton';
 import ExpandableText from '@/components/ExpandableText';
 import LikeButton from '@/components/LikeButton';
+import ShareButton from '@/components/ShareButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -110,6 +111,7 @@ export default async function AlbumPage({
 
       {/* Action buttons */}
       <div className="flex justify-end gap-2 mb-4">
+        <ShareButton title={album.title} />
         {photos.length > 0 && <ZipDownloadButton photos={photos} albumTitle={album.title} />}
         <Link
           href={`/albums/${albumId}/upload`}

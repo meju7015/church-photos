@@ -2,9 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { useConfirm } from '@/components/ConfirmDialog';
+import { useToast } from '@/hooks/useToast';
 import type { Department, Class } from '@/types';
 
 export default function AdminDepartmentsPage() {
+  const confirm = useConfirm();
+  const { toast } = useToast();
   const [departments, setDepartments] = useState<Department[]>([]);
   const [classesMap, setClassesMap] = useState<Record<string, Class[]>>({});
   const [newDeptName, setNewDeptName] = useState('');
@@ -58,9 +62,11 @@ export default function AdminDepartmentsPage() {
   };
 
   const deleteClass = async (classId: string) => {
-    if (!confirm('이 반을 삭제하시겠습니까?')) return;
+    const ok = await confirm({ message: '이 반을 삭제하시겠습니까?', confirmText: '삭제', danger: true });
+    if (!ok) return;
     const supabase = createClient();
     await supabase.from('classes').delete().eq('id', classId);
+    toast('반이 삭제되었습니다', 'success');
     await fetchData();
   };
 

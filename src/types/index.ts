@@ -78,6 +78,18 @@ export interface Comment {
   user?: User;
 }
 
+export interface Announcement {
+  id: string;
+  title: string;
+  content: string;
+  department_id: string | null;
+  pinned: boolean;
+  created_by: string;
+  created_at: string;
+  creator?: User;
+  department?: Department;
+}
+
 export interface Notification {
   id: string;
   user_id: string;

@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/useToast';
+import { useConfirm } from '@/components/ConfirmDialog';
 
 export default function AlbumActions({
   albumId,
@@ -15,6 +17,8 @@ export default function AlbumActions({
   albumEventDate: string;
 }) {
   const router = useRouter();
+  const { toast } = useToast();
+  const confirm = useConfirm();
   const [menuOpen, setMenuOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(albumTitle);
@@ -31,15 +35,29 @@ export default function AlbumActions({
     });
     setSaving(false);
     if (res.ok) {
+      toast('앨범이 수정되었습니다', 'success');
       setEditing(false);
       router.refresh();
+    } else {
+      toast('수정에 실패했습니다', 'error');
     }
   };
 
   const handleDelete = async () => {
-    if (!confirm('이 앨범과 모든 사진을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) return;
+    const ok = await confirm({
+      title: '앨범 삭제',
+      message: '이 앨범과 모든 사진을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.',
+      confirmText: '삭제',
+      danger: true,
+    });
+    if (!ok) return;
     const res = await fetch(`/api/albums/${albumId}`, { method: 'DELETE' });
-    if (res.ok) router.push('/');
+    if (res.ok) {
+      toast('앨범이 삭제되었습니다', 'success');
+      router.push('/');
+    } else {
+      toast('삭제에 실패했습니다', 'error');
+    }
   };
 
   if (editing) {

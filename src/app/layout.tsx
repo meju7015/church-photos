@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import ThemeProvider from "@/components/ThemeProvider";
+import { ToastProvider } from "@/components/Toast";
+import { ConfirmProvider } from "@/components/ConfirmDialog";
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -37,7 +39,11 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col bg-[var(--bg)] text-[var(--text)] transition-colors duration-300">
         <ThemeProvider>
-          {children}
+          <ToastProvider>
+            <ConfirmProvider>
+              {children}
+            </ConfirmProvider>
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -3,11 +3,15 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { generateInviteCode } from '@/lib/utils';
+import { useConfirm } from '@/components/ConfirmDialog';
+import { useToast } from '@/hooks/useToast';
 import type { Department, Class, InviteCode } from '@/types';
 
 const inputClass = "px-4 pr-7 py-2.5 bg-[var(--bg)] border border-[var(--border)] rounded-2xl focus:ring-2 focus:ring-candy-purple outline-none text-[var(--text)] placeholder-[var(--text-sub)]";
 
 export default function AdminMembersPage() {
+  const confirm = useConfirm();
+  const { toast } = useToast();
   const [departments, setDepartments] = useState<Department[]>([]);
   const [classes, setClasses] = useState<Class[]>([]);
   const [selectedDept, setSelectedDept] = useState('');
@@ -75,6 +79,7 @@ export default function AdminMembersPage() {
 
   const copyCode = (code: string) => {
     navigator.clipboard.writeText(code);
+    toast('초대코드가 복사되었습니다', 'success');
   };
 
   return (
@@ -199,10 +204,12 @@ export default function AdminMembersPage() {
                     </span>
                     <button
                       onClick={async () => {
-                        if (!confirm(`${m.user?.name}님을 이 반에서 제거하시겠습니까?`)) return;
+                        const ok = await confirm({ message: `${m.user?.name}님을 이 반에서 제거하시겠습니까?`, confirmText: '제거', danger: true });
+                        if (!ok) return;
                         const supabase = createClient();
                         await supabase.from('user_classes').delete().eq('user_id', m.user_id).eq('class_id', selectedClass);
                         setMembers((prev) => prev.filter((x) => x.user_id !== m.user_id));
+                        toast('멤버가 제거되었습니다', 'success');
                       }}
                       className="text-xs text-candy-red/60 hover:text-candy-red"
                     >
