@@ -26,7 +26,7 @@ export default function Navigation({ user }: { user: User }) {
   return (
     <>
       {/* Top nav - desktop */}
-      <nav className="bg-[var(--surface)] border-b border-[var(--border)] sticky top-0 z-50 backdrop-blur-lg bg-opacity-90">
+      <nav className="bg-[var(--bg)]/80 sticky top-0 z-50 backdrop-blur-xl">
         <div className="max-w-4xl mx-auto px-4">
           <div className="flex items-center justify-between h-14">
             <Link href="/" className="flex items-center gap-2">
