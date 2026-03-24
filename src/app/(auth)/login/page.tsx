@@ -18,8 +18,10 @@ export default function LoginPage() {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [kakaoLoading, setKakaoLoading] = useState(false);
 
   const handleKakaoLogin = () => {
+    setKakaoLoading(true);
     window.location.href = '/api/auth/kakao';
   };
 
@@ -75,13 +77,21 @@ export default function LoginPage() {
           {/* 카카오 로그인 */}
           <button
             onClick={handleKakaoLogin}
-            className="w-full py-3.5 px-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2.5 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md"
+            disabled={kakaoLoading}
+            className="w-full py-3.5 px-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2.5 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md disabled:opacity-70 disabled:scale-100"
             style={{ backgroundColor: '#FEE500', color: '#3C1E1E' }}
           >
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 3C6.477 3 2 6.463 2 10.691c0 2.722 1.812 5.108 4.54 6.458-.2.747-.724 2.708-.83 3.13-.13.528.193.52.407.378.168-.11 2.671-1.813 3.755-2.556.694.1 1.407.152 2.128.152 5.523 0 10-3.463 10-7.562C22 6.463 17.523 3 12 3z" />
-            </svg>
-            카카오로 시작하기
+            {kakaoLoading ? (
+              <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+            ) : (
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 3C6.477 3 2 6.463 2 10.691c0 2.722 1.812 5.108 4.54 6.458-.2.747-.724 2.708-.83 3.13-.13.528.193.52.407.378.168-.11 2.671-1.813 3.755-2.556.694.1 1.407.152 2.128.152 5.523 0 10-3.463 10-7.562C22 6.463 17.523 3 12 3z" />
+              </svg>
+            )}
+            {kakaoLoading ? '로그인 중...' : '카카오로 시작하기'}
           </button>
 
           {/* 구분선 */}

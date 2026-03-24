@@ -2,19 +2,13 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import InfiniteAlbumFeed from '@/components/InfiniteAlbumFeed';
-import SearchBar from '@/components/SearchBar';
 import { getDailyVerse } from '@/lib/bible-verses';
 import { createAdminClient } from '@/lib/supabase/admin';
 import HomeBanner from '@/components/HomeBanner';
 
 export const dynamic = 'force-dynamic';
 
-export default async function HomePage({
-  searchParams,
-}: {
-  searchParams: Promise<{ search?: string }>;
-}) {
-  const params = await searchParams;
+export default async function HomePage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
@@ -26,7 +20,7 @@ export default async function HomePage({
 
   const classIds = userClasses?.map((uc) => uc.class_id) || [];
 
-  let query = supabase
+  const { data: albums } = await supabase
     .from('albums')
     .select(`
       *,
@@ -37,12 +31,6 @@ export default async function HomePage({
     .in('class_id', classIds.length > 0 ? classIds : [''])
     .order('created_at', { ascending: false })
     .limit(12);
-
-  if (params.search) {
-    query = query.ilike('title', `%${params.search}%`);
-  }
-
-  const { data: albums } = await query;
 
   // likes를 admin client로 별도 조회 (RLS 우회)
   const adminSb = createAdminClient();
@@ -98,17 +86,12 @@ export default async function HomePage({
         </div>
       </div>
 
-      {/* 검색 + 앨범 */}
+      {/* 앨범 */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-base font-bold text-[var(--text)]">
-            {params.search ? `"${params.search}" 검색 결과` : '최근 앨범'}
-          </h2>
+          <h2 className="text-base font-bold text-[var(--text)]">최근 앨범</h2>
         </div>
-        <div className="mb-4">
-          <SearchBar basePath="/" />
-        </div>
-        <InfiniteAlbumFeed initialAlbums={albumsWithLikes as any} search={params.search} currentUserId={user.id} />
+        <InfiniteAlbumFeed initialAlbums={albumsWithLikes as any} currentUserId={user.id} />
       </div>
     </div>
   );

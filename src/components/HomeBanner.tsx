@@ -66,7 +66,7 @@ export default function HomeBanner({
   };
 
   return (
-    <div className="mb-6 relative overflow-hidden rounded-3xl shadow-lg shadow-candy-purple/20">
+    <div className="mb-4 relative overflow-hidden rounded-3xl shadow-lg shadow-candy-purple/20">
       <div
         className="flex transition-transform duration-300 ease-out"
         style={{
