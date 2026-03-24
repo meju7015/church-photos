@@ -75,7 +75,7 @@ export default function HomeBanner({
   return (
     <>
       <div
-        className="mb-2 relative overflow-hidden rounded-3xl shadow-lg shadow-candy-purple/20 h-[140px]"
+        className="relative overflow-hidden rounded-3xl shadow-lg shadow-candy-purple/20 h-[140px]"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}

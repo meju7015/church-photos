@@ -55,12 +55,12 @@ export default async function HomePage() {
   const verse = getDailyVerse();
 
   return (
-    <div>
+    <div className="space-y-5">
       {/* 배너 (오늘의 말씀 + 공지사항 슬라이드) */}
       <HomeBanner verse={verse} announcements={pinnedAnnouncements || []} />
 
       {/* 내 반 */}
-      <div className="mb-6">
+      <div>
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-base font-bold text-[var(--text)]">내 반</h2>
           <Link href="/departments" className="text-xs font-semibold text-candy-purple hover:underline">
