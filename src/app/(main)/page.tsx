@@ -5,7 +5,7 @@ import InfiniteAlbumFeed from '@/components/InfiniteAlbumFeed';
 import SearchBar from '@/components/SearchBar';
 import { getDailyVerse } from '@/lib/bible-verses';
 import { createAdminClient } from '@/lib/supabase/admin';
-import AnnouncementBanner from '@/components/AnnouncementBanner';
+import HomeBanner from '@/components/HomeBanner';
 
 export const dynamic = 'force-dynamic';
 
@@ -64,24 +64,12 @@ export default async function HomePage({
     .order('created_at', { ascending: false })
     .limit(3);
 
+  const verse = getDailyVerse();
+
   return (
     <div>
-      {/* 고정 공지 */}
-      {pinnedAnnouncements && pinnedAnnouncements.length > 0 && (
-        <AnnouncementBanner announcements={pinnedAnnouncements} />
-      )}
-
-      {/* 오늘의 말씀 */}
-      {(() => {
-        const verse = getDailyVerse();
-        return (
-          <div className="gradient-candy rounded-3xl p-6 mb-6 text-white shadow-lg shadow-candy-purple/20">
-            <p className="text-white/70 text-xs font-semibold mb-2">오늘의 말씀</p>
-            <p className="text-base font-bold leading-relaxed">{verse.text}</p>
-            <p className="text-white/60 text-xs mt-2 text-right">{verse.ref}</p>
-          </div>
-        );
-      })()}
+      {/* 배너 (오늘의 말씀 + 공지사항 슬라이드) */}
+      <HomeBanner verse={verse} announcements={pinnedAnnouncements || []} />
 
       {/* 내 반 */}
       <div className="mb-6">
