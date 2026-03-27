@@ -22,7 +22,7 @@ export default function ExpandableText({
         {needsTruncate && (
           <button
             onClick={() => setExpanded(false)}
-            className="text-candy-purple text-xs ml-1 font-semibold"
+            className="text-primary text-xs ml-1 font-semibold"
           >
             접기
           </button>
@@ -38,7 +38,7 @@ export default function ExpandableText({
       {truncated}...
       <button
         onClick={() => setExpanded(true)}
-        className="text-candy-purple text-xs ml-1 font-semibold"
+        className="text-primary text-xs ml-1 font-semibold"
       >
         더보기
       </button>

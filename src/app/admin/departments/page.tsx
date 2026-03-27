@@ -88,22 +88,22 @@ export default function AdminDepartmentsPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-extrabold text-[var(--text)] mb-6">부서/반 관리</h1>
+      <h1 className="text-xl font-bold text-[var(--text)] mb-6">부서/반 관리</h1>
 
       {/* 부서 추가 */}
-      <div className="bg-[var(--surface-card)] rounded-3xl border border-[var(--border)] p-4 mb-6">
+      <div className="bg-[var(--surface-card)] rounded-2xl shadow-sm shadow-black/4 p-4 mb-6">
         <div className="flex gap-2">
           <input
             type="text"
             value={newDeptName}
             onChange={(e) => setNewDeptName(e.target.value)}
             placeholder="새 부서 이름"
-            className="flex-1 px-4 py-2.5 bg-[var(--bg)] border border-[var(--border)] rounded-2xl text-sm focus:ring-2 focus:ring-candy-purple outline-none text-[var(--text)] placeholder-[var(--text-sub)]"
+            className="flex-1 px-4 py-2.5 bg-[var(--bg)] border border-[var(--border)] rounded-2xl text-sm focus:ring-2 focus:ring-primary outline-none text-[var(--text)] placeholder-[var(--text-sub)]"
           />
           <button
             onClick={addDepartment}
             disabled={loading}
-            className="px-4 py-2.5 gradient-candy text-white rounded-2xl text-sm font-bold hover:opacity-90 disabled:opacity-40"
+            className="px-4 py-2.5 bg-primary text-white rounded-2xl text-sm font-bold hover:opacity-90 disabled:opacity-40"
           >
             부서 추가
           </button>
@@ -113,7 +113,7 @@ export default function AdminDepartmentsPage() {
       {/* 부서별 반 목록 */}
       <div className="space-y-4">
         {departments.map((dept, index) => (
-          <div key={dept.id} className="bg-[var(--surface-card)] rounded-3xl border border-[var(--border)] p-4">
+          <div key={dept.id} className="bg-[var(--surface-card)] rounded-2xl shadow-sm shadow-black/4 p-4">
             <div className="flex items-center justify-between mb-3">
               <h2 className="font-bold text-sm text-[var(--text)]">{dept.name}</h2>
               <div className="flex gap-1">
@@ -146,7 +146,7 @@ export default function AdminDepartmentsPage() {
                   <span className="text-sm text-[var(--text)]">{cls.name}</span>
                   <button
                     onClick={() => deleteClass(cls.id)}
-                    className="text-xs text-candy-red/60 hover:text-candy-red"
+                    className="text-xs text-danger/60 hover:text-danger"
                   >
                     삭제
                   </button>
@@ -163,11 +163,11 @@ export default function AdminDepartmentsPage() {
                 value={newClassNames[dept.id] || ''}
                 onChange={(e) => setNewClassNames((prev) => ({ ...prev, [dept.id]: e.target.value }))}
                 placeholder="새 반 이름"
-                className="flex-1 px-3 py-2 bg-[var(--bg)] border border-[var(--border)] rounded-xl text-sm focus:ring-2 focus:ring-candy-purple outline-none text-[var(--text)] placeholder-[var(--text-sub)]"
+                className="flex-1 px-3 py-2 bg-[var(--bg)] border border-[var(--border)] rounded-xl text-sm focus:ring-2 focus:ring-primary outline-none text-[var(--text)] placeholder-[var(--text-sub)]"
               />
               <button
                 onClick={() => addClass(dept.id)}
-                className="px-3 py-2 bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] rounded-xl text-sm font-semibold hover:border-candy-purple/40"
+                className="px-3 py-2 bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] rounded-xl text-sm font-semibold hover:border-primary/40"
               >
                 반 추가
               </button>

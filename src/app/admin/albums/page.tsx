@@ -60,7 +60,7 @@ export default async function AdminAlbumsPage({
 
   return (
     <div>
-      <h1 className="text-xl font-extrabold text-[var(--text)] mb-6">앨범 히스토리</h1>
+      <h1 className="text-xl font-bold text-[var(--text)] mb-6">앨범 히스토리</h1>
 
       {/* 검색 */}
       <div className="mb-4">
@@ -87,7 +87,7 @@ export default async function AdminAlbumsPage({
           />
           <button
             type="submit"
-            className="px-3 py-1.5 gradient-candy text-white rounded-xl text-xs font-bold"
+            className="px-3 py-1.5 bg-primary text-white rounded-xl text-xs font-bold"
           >
             적용
           </button>
@@ -107,7 +107,7 @@ export default async function AdminAlbumsPage({
         <Link
           href={buildUrl()}
           className={`px-3 py-1.5 rounded-2xl text-sm whitespace-nowrap font-semibold transition-all ${
-            !params.dept ? 'gradient-candy text-white shadow-md' : 'bg-[var(--surface-card)] border border-[var(--border)] text-[var(--text-sub)]'
+            !params.dept ? 'bg-primary text-white shadow-md' : 'bg-[var(--surface-card)] border border-[var(--border)] text-[var(--text-sub)]'
           }`}
         >
           전체
@@ -117,7 +117,7 @@ export default async function AdminAlbumsPage({
             key={d.id}
             href={buildUrl(d.id)}
             className={`px-3 py-1.5 rounded-2xl text-sm whitespace-nowrap font-semibold transition-all ${
-              params.dept === d.id ? 'gradient-candy text-white shadow-md' : 'bg-[var(--surface-card)] border border-[var(--border)] text-[var(--text-sub)]'
+              params.dept === d.id ? 'bg-primary text-white shadow-md' : 'bg-[var(--surface-card)] border border-[var(--border)] text-[var(--text-sub)]'
             }`}
           >
             {d.name}
@@ -126,7 +126,7 @@ export default async function AdminAlbumsPage({
       </div>
 
       {/* 앨범 목록 */}
-      <div className="bg-[var(--surface-card)] rounded-3xl border border-[var(--border)] divide-y divide-[var(--border)] overflow-hidden">
+      <div className="bg-[var(--surface-card)] rounded-2xl shadow-sm shadow-black/4 divide-y divide-[var(--border)] overflow-hidden">
         {filteredAlbums?.map((album) => (
           <Link
             key={album.id}

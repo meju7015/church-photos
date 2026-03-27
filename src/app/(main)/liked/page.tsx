@@ -43,7 +43,7 @@ export default async function LikedAlbumsPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-extrabold text-[var(--text)] mb-6">좋아한 앨범</h1>
+      <h1 className="text-xl font-bold text-[var(--text)] mb-6">좋아한 앨범</h1>
 
       {albums.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

@@ -7,7 +7,7 @@ import { usePhotoUpload } from '@/hooks/usePhotoUpload';
 import { useToast } from '@/hooks/useToast';
 import type { Department, Class } from '@/types';
 
-const inputClass = "w-full px-4 pr-7 py-2.5 bg-[var(--bg)] border border-[var(--border)] rounded-2xl focus:ring-2 focus:ring-candy-purple focus:border-transparent outline-none text-[var(--text)] placeholder-[var(--text-sub)]";
+const inputClass = "w-full px-4 pr-7 py-2.5 bg-[var(--bg)] border border-[var(--border)] rounded-2xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-[var(--text)] placeholder-[var(--text-sub)]";
 const labelClass = "block text-sm font-semibold text-[var(--text)] mb-1.5";
 
 export default function AdminUploadPage() {
@@ -75,10 +75,10 @@ export default function AdminUploadPage() {
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-xl font-extrabold text-[var(--text)] mb-6">새 앨범 생성</h1>
+      <h1 className="text-xl font-bold text-[var(--text)] mb-6">새 앨범 생성</h1>
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="bg-[var(--surface-card)] rounded-3xl border border-[var(--border)] p-6 space-y-4">
+        <div className="bg-[var(--surface-card)] rounded-2xl shadow-sm shadow-black/4 p-6 space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className={labelClass}>부서</label>
@@ -114,20 +114,20 @@ export default function AdminUploadPage() {
           onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
           onDragLeave={() => setDragOver(false)}
           onDrop={(e) => { e.preventDefault(); setDragOver(false); addFiles(e.dataTransfer.files); }}
-          className={`border-2 border-dashed rounded-3xl p-8 text-center transition-all ${
-            dragOver ? 'border-candy-purple bg-candy-purple/5 scale-[1.01]' : 'border-[var(--border)] bg-[var(--surface-card)]'
+          className={`border-2 border-dashed rounded-2xl p-8 text-center transition-all ${
+            dragOver ? 'border-primary bg-primary/5 scale-[1.01]' : 'border-[var(--border)] bg-[var(--surface-card)]'
           }`}
         >
           <p className="text-[var(--text-sub)] text-sm mb-1">사진을 드래그하거나 클릭하여 선택</p>
           <p className="text-xs text-[var(--text-sub)] mb-3">최대 10MB, JPG/PNG/WebP</p>
-          <label className="inline-block px-5 py-2.5 gradient-candy text-white rounded-2xl text-sm font-bold cursor-pointer hover:opacity-90 shadow-md shadow-candy-purple/20">
+          <label className="inline-block px-5 py-2.5 bg-primary text-white rounded-2xl text-sm font-bold cursor-pointer hover:opacity-90 shadow-sm">
             파일 선택
             <input type="file" accept="image/*" multiple onChange={(e) => e.target.files && addFiles(e.target.files)} className="hidden" />
           </label>
         </div>
 
         {uploadError && (
-          <div className="p-3 bg-candy-red/10 border border-candy-red/20 rounded-2xl text-sm text-candy-red whitespace-pre-line">
+          <div className="p-3 bg-danger/10 border border-danger/20 rounded-2xl text-sm text-danger whitespace-pre-line">
             {uploadError}
           </div>
         )}
@@ -149,7 +149,7 @@ export default function AdminUploadPage() {
         {uploading && (
           <div>
             <div className="h-2.5 bg-[var(--border)] rounded-full overflow-hidden">
-              <div className="h-full gradient-candy transition-all duration-300 rounded-full" style={{ width: `${progress}%` }} />
+              <div className="h-full bg-primary transition-all duration-300 rounded-full" style={{ width: `${progress}%` }} />
             </div>
             <p className="text-sm text-[var(--text-sub)] mt-1 text-center">{progress}%</p>
           </div>
@@ -158,7 +158,7 @@ export default function AdminUploadPage() {
         <button
           type="submit"
           disabled={uploading || !selectedClass || !title || files.length === 0}
-          className="w-full py-3.5 gradient-candy text-white rounded-2xl font-bold hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-md shadow-candy-purple/20"
+          className="w-full py-3.5 bg-primary text-white rounded-2xl font-bold hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
         >
           {uploading ? '업로드 중...' : `앨범 생성 (${files.length}장)`}
         </button>

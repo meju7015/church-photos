@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { CameraIcon } from '@/components/icons';
 
 type Mode = 'login' | 'signup';
 
@@ -62,27 +63,27 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center gradient-candy-soft px-4 relative overflow-hidden">
+    <div className="min-h-[100dvh] flex items-center justify-center gradient-soft px-4 relative overflow-hidden">
       <div className="w-full max-w-sm text-center relative z-10">
-        <div className="mb-8">
-          <div className="w-24 h-24 gradient-candy rounded-3xl mx-auto flex items-center justify-center mb-5 shadow-lg shadow-candy-purple/20 animate-bounce-soft rotate-3">
-            <span className="text-5xl">📸</span>
+        <div className="mb-10 animate-fade-up">
+          <div className="w-16 h-16 bg-primary rounded-2xl mx-auto flex items-center justify-center mb-5">
+            <CameraIcon className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-extrabold bg-gradient-to-r from-candy-pink via-candy-purple to-candy-blue bg-clip-text text-transparent">
+          <h1 className="text-2xl font-bold text-[var(--text)]">
             우리교회
           </h1>
-          <h2 className="text-xl font-bold text-[var(--text)] mt-1">포토앨범</h2>
-          <p className="text-[var(--text-sub)] mt-2 text-sm">
+          <h2 className="text-lg font-medium text-[var(--text-sub)] mt-1">포토앨범</h2>
+          <p className="text-[var(--text-sub)] mt-2 text-sm leading-relaxed">
             우리 아이들의 소중한 순간을 함께해요
           </p>
         </div>
 
-        <div className="bg-[var(--surface-card)] rounded-3xl p-6 shadow-xl shadow-candy-purple/5 border border-[var(--border)] space-y-4">
+        <div className="bg-[var(--surface-card)] rounded-2xl p-7 shadow-sm border border-[var(--border)] space-y-5 animate-fade-up" style={{ animationDelay: '100ms' }}>
           {/* 카카오 로그인 */}
           <button
             onClick={handleKakaoLogin}
             disabled={kakaoLoading}
-            className="w-full py-3.5 px-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2.5 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md disabled:opacity-70 disabled:scale-100"
+            className="w-full py-3.5 px-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2.5 transition-all btn-press shadow-sm disabled:opacity-70 disabled:scale-100"
             style={{ backgroundColor: '#FEE500', color: '#3C1E1E' }}
           >
             {kakaoLoading ? (
@@ -114,7 +115,7 @@ export default function LoginPage() {
                 onChange={(e) => setName(e.target.value)}
                 placeholder="이름"
                 required
-                className="w-full px-4 py-3 bg-[var(--bg)] border border-[var(--border)] rounded-2xl text-sm focus:ring-2 focus:ring-candy-purple focus:border-transparent outline-none text-[var(--text)] placeholder-[var(--text-sub)]"
+                className="w-full px-4 py-3 bg-[var(--bg)] border border-[var(--border)] rounded-2xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-[var(--text)] placeholder-[var(--text-sub)]"
               />
             )}
             <input
@@ -123,7 +124,7 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="아이디 또는 이메일"
               required
-              className="w-full px-4 py-3 bg-[var(--bg)] border border-[var(--border)] rounded-2xl text-sm focus:ring-2 focus:ring-candy-purple focus:border-transparent outline-none text-[var(--text)] placeholder-[var(--text-sub)]"
+              className="w-full px-4 py-3 bg-[var(--bg)] border border-[var(--border)] rounded-2xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-[var(--text)] placeholder-[var(--text-sub)]"
             />
             <input
               type="password"
@@ -132,11 +133,11 @@ export default function LoginPage() {
               placeholder="비밀번호 (6자 이상)"
               required
               minLength={6}
-              className="w-full px-4 py-3 bg-[var(--bg)] border border-[var(--border)] rounded-2xl text-sm focus:ring-2 focus:ring-candy-purple focus:border-transparent outline-none text-[var(--text)] placeholder-[var(--text-sub)]"
+              className="w-full px-4 py-3 bg-[var(--bg)] border border-[var(--border)] rounded-2xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-[var(--text)] placeholder-[var(--text-sub)]"
             />
 
             {error && (
-              <div className="text-candy-red text-xs text-center bg-candy-red/10 rounded-xl py-2">
+              <div className="text-danger text-xs text-center bg-danger/10 rounded-xl py-2">
                 {error}
               </div>
             )}
@@ -144,7 +145,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 gradient-candy text-white rounded-2xl font-bold text-sm hover:opacity-90 disabled:opacity-40 transition-all shadow-md shadow-candy-purple/20"
+              className="w-full py-3.5 bg-primary text-white rounded-2xl font-bold text-sm hover:opacity-90 disabled:opacity-40 transition-all shadow-sm btn-press"
             >
               {loading ? '처리 중...' : mode === 'login' ? '로그인' : '회원가입'}
             </button>
@@ -154,14 +155,14 @@ export default function LoginPage() {
             {mode === 'login' ? (
               <>
                 계정이 없으신가요?{' '}
-                <button onClick={() => { setMode('signup'); setError(''); }} className="text-candy-purple font-semibold">
+                <button onClick={() => { setMode('signup'); setError(''); }} className="text-primary font-semibold">
                   회원가입
                 </button>
               </>
             ) : (
               <>
                 이미 계정이 있으신가요?{' '}
-                <button onClick={() => { setMode('login'); setError(''); }} className="text-candy-purple font-semibold">
+                <button onClick={() => { setMode('login'); setError(''); }} className="text-primary font-semibold">
                   로그인
                 </button>
               </>

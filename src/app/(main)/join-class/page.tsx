@@ -38,10 +38,10 @@ export default function JoinClassPage() {
 
   return (
     <div className="max-w-sm mx-auto py-8">
-      <h1 className="text-xl font-extrabold text-[var(--text)] mb-2">반 추가</h1>
+      <h1 className="text-xl font-bold text-[var(--text)] mb-2">반 추가</h1>
       <p className="text-sm text-[var(--text-sub)] mb-6">다른 반의 초대코드를 입력하여 추가로 가입하세요</p>
 
-      <form onSubmit={handleJoin} className="bg-[var(--surface-card)] rounded-3xl border border-[var(--border)] p-6 space-y-4">
+      <form onSubmit={handleJoin} className="bg-[var(--surface-card)] rounded-2xl shadow-sm shadow-black/4 p-6 space-y-4">
         <div>
           <label className="block text-sm font-semibold text-[var(--text)] mb-1.5">초대코드</label>
           <input
@@ -51,21 +51,21 @@ export default function JoinClassPage() {
             placeholder="ABC123"
             maxLength={6}
             required
-            className="w-full px-4 py-3 bg-[var(--bg)] border border-[var(--border)] rounded-2xl text-center text-2xl tracking-[0.5em] font-mono focus:ring-2 focus:ring-candy-purple focus:border-transparent outline-none text-[var(--text)] placeholder-[var(--text-sub)]"
+            className="w-full px-4 py-3 bg-[var(--bg)] border border-[var(--border)] rounded-2xl text-center text-2xl tracking-[0.5em] font-mono focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-[var(--text)] placeholder-[var(--text-sub)]"
           />
         </div>
 
         {error && (
-          <div className="text-candy-red text-sm text-center bg-candy-red/10 rounded-xl py-2">{error}</div>
+          <div className="text-danger text-sm text-center bg-danger/10 rounded-xl py-2">{error}</div>
         )}
         {success && (
-          <div className="text-candy-green text-sm text-center bg-candy-green/10 rounded-xl py-2">{success}</div>
+          <div className="text-success text-sm text-center bg-success/10 rounded-xl py-2">{success}</div>
         )}
 
         <button
           type="submit"
           disabled={loading || code.length < 6}
-          className="w-full py-3.5 gradient-candy text-white rounded-2xl font-bold text-sm hover:opacity-90 disabled:opacity-40 transition-all shadow-md shadow-candy-purple/20"
+          className="w-full py-3.5 bg-primary text-white rounded-2xl font-bold text-sm hover:opacity-90 disabled:opacity-40 transition-all shadow-sm"
         >
           {loading ? '처리 중...' : '반 추가'}
         </button>

@@ -15,8 +15,8 @@ export default function MainError({
 
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
-      <div className="w-16 h-16 gradient-candy rounded-2xl flex items-center justify-center mb-4 opacity-60">
-        <span className="text-3xl">!</span>
+      <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mb-4 opacity-60">
+        <span className="text-3xl text-white font-bold">!</span>
       </div>
       <h2 className="text-lg font-bold text-[var(--text)] mb-2">문제가 발생했습니다</h2>
       <p className="text-sm text-[var(--text-sub)] mb-6 max-w-sm">
@@ -24,7 +24,7 @@ export default function MainError({
       </p>
       <button
         onClick={reset}
-        className="px-6 py-2.5 gradient-candy text-white rounded-2xl text-sm font-bold hover:opacity-90 transition-all"
+        className="px-6 py-2.5 bg-primary text-white rounded-2xl text-sm font-bold hover:opacity-90 transition-all btn-press"
       >
         다시 시도
       </button>

@@ -10,7 +10,7 @@ export default function AlbumLoading() {
           <div key={i} className="aspect-square bg-[var(--border)] rounded-2xl" />
         ))}
       </div>
-      <div className="h-24 bg-[var(--border)] rounded-3xl" />
+      <div className="h-24 bg-[var(--border)] rounded-2xl" />
     </div>
   );
 }

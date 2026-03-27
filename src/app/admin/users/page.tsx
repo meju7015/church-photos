@@ -75,14 +75,14 @@ export default function AdminUsersPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-extrabold text-[var(--text)] mb-6">사용자 관리</h1>
+      <h1 className="text-xl font-bold text-[var(--text)] mb-6">사용자 관리</h1>
 
-      <div className="bg-[var(--surface-card)] rounded-3xl border border-[var(--border)] divide-y divide-[var(--border)] overflow-hidden">
+      <div className="bg-[var(--surface-card)] rounded-2xl shadow-sm shadow-black/4 divide-y divide-[var(--border)] overflow-hidden">
         {users.map((user) => (
           <div key={user.id} className={`p-4 transition-opacity ${processingId === user.id ? 'opacity-50 pointer-events-none' : ''}`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl gradient-candy flex items-center justify-center text-sm font-bold text-white">
+                <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center text-sm font-bold text-white">
                   {user.name.charAt(0)}
                 </div>
                 <div>
@@ -92,7 +92,7 @@ export default function AdminUsersPage() {
               </div>
               <div className="flex items-center gap-2">
                 {processingId === user.id ? (
-                  <svg className="w-5 h-5 animate-spin text-candy-purple" fill="none" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 animate-spin text-primary" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
@@ -101,7 +101,7 @@ export default function AdminUsersPage() {
                     <select
                       value={user.role}
                       onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                      className="px-3 py-1.5 bg-[var(--bg)] border border-[var(--border)] rounded-xl text-xs font-semibold text-[var(--text)] outline-none focus:ring-2 focus:ring-candy-purple pr-7"
+                      className="px-3 py-1.5 bg-[var(--bg)] border border-[var(--border)] rounded-xl text-xs font-semibold text-[var(--text)] outline-none focus:ring-2 focus:ring-primary pr-7"
                     >
                       <option value="parent">학부모</option>
                       <option value="teacher">선생님</option>
@@ -109,7 +109,7 @@ export default function AdminUsersPage() {
                     </select>
                     <button
                       onClick={() => handleDelete(user)}
-                      className="p-1.5 rounded-lg hover:bg-candy-red/10 text-[var(--text-sub)] hover:text-candy-red transition-colors"
+                      className="p-1.5 rounded-lg hover:bg-danger/10 text-[var(--text-sub)] hover:text-danger transition-colors"
                       title="삭제"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -123,7 +123,7 @@ export default function AdminUsersPage() {
             {user.user_classes.length > 0 && (
               <div className="flex flex-wrap gap-1 mt-2 ml-13">
                 {user.user_classes.map((uc: any, i: number) => (
-                  <span key={i} className="px-2 py-0.5 bg-candy-purple/10 rounded-full text-xs text-candy-purple font-medium">
+                  <span key={i} className="px-2 py-0.5 bg-primary/10 rounded-full text-xs text-primary font-medium">
                     {uc.class?.department?.name} - {uc.class?.name}
                   </span>
                 ))}

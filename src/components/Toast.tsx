@@ -18,9 +18,9 @@ function ToastMessage({ toast, onRemove }: { toast: ToastItem; onRemove: () => v
   }, [onRemove]);
 
   const colors = {
-    success: 'bg-candy-green text-white',
-    error: 'bg-candy-red text-white',
-    info: 'gradient-candy text-white',
+    success: 'bg-success text-white',
+    error: 'bg-danger text-white',
+    info: 'bg-primary text-white',
   };
 
   const icons = {

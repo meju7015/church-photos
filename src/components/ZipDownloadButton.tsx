@@ -51,7 +51,7 @@ export default function ZipDownloadButton({
     <button
       onClick={handleDownload}
       disabled={downloading}
-      className="px-4 py-2.5 bg-[var(--surface-card)] border border-[var(--border)] text-[var(--text)] rounded-2xl text-sm font-semibold hover:border-candy-purple/40 transition-all disabled:opacity-50"
+      className="px-4 py-2.5 bg-[var(--surface-card)] border border-[var(--border)] text-[var(--text)] rounded-2xl text-sm font-semibold hover:border-primary/30 transition-all disabled:opacity-50"
     >
       {downloading ? `다운로드 중 ${progress}%` : '전체 다운로드'}
     </button>

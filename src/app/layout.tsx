@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   title: "우리교회 포토앨범",
   description: "우리 교회 부서별 사진 공유 서비스",
   manifest: "/manifest.json",
-  themeColor: "#C084FC",
+  themeColor: "#3182F6",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -31,6 +31,7 @@ export default function RootLayout({
   return (
     <html lang="ko" className="h-full antialiased" suppressHydrationWarning>
       <head>
+        <link rel="stylesheet" as="style" crossOrigin="anonymous" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css" />
         <script dangerouslySetInnerHTML={{ __html: `
           try {
             if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');

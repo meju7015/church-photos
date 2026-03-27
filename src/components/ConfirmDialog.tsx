@@ -46,7 +46,7 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
         <>
           <div className="fixed inset-0 bg-black/40 z-[300]" onClick={() => handleClose(false)} />
           <div className="fixed inset-0 z-[301] flex items-center justify-center p-4">
-            <div className="bg-[var(--surface-card)] rounded-3xl border border-[var(--border)] p-6 w-full max-w-sm shadow-2xl">
+            <div className="bg-[var(--surface-card)] rounded-2xl shadow-sm shadow-black/4 p-6 w-full max-w-sm shadow-2xl animate-fade-up">
               {state.options.title && (
                 <h3 className="text-base font-bold text-[var(--text)] mb-2">{state.options.title}</h3>
               )}
@@ -54,14 +54,14 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
               <div className="flex gap-2">
                 <button
                   onClick={() => handleClose(false)}
-                  className="flex-1 py-2.5 bg-[var(--border)] text-[var(--text-sub)] rounded-2xl text-sm font-bold hover:opacity-80 transition-opacity"
+                  className="flex-1 py-2.5 bg-[var(--border)] text-[var(--text-sub)] rounded-2xl text-sm font-bold hover:opacity-80 transition-opacity btn-press"
                 >
                   {state.options.cancelText || '취소'}
                 </button>
                 <button
                   onClick={() => handleClose(true)}
-                  className={`flex-1 py-2.5 text-white rounded-2xl text-sm font-bold hover:opacity-90 transition-opacity ${
-                    state.options.danger ? 'bg-candy-red' : 'gradient-candy'
+                  className={`flex-1 py-2.5 text-white rounded-2xl text-sm font-bold hover:opacity-90 transition-opacity btn-press ${
+                    state.options.danger ? 'bg-danger' : 'bg-primary'
                   }`}
                 >
                   {state.options.confirmText || '확인'}

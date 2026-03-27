@@ -4,45 +4,160 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { CameraIcon } from './icons';
 
-const allItems = [
-  { href: '/admin', label: '대시보드', adminOnly: false, icon: (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25a2.25 2.25 0 01-2.25-2.25v-2.25z" />
-    </svg>
-  )},
-  { href: '/admin/upload', label: '앨범 생성', adminOnly: false, icon: (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-    </svg>
-  )},
-  { href: '/admin/albums', label: '히스토리', adminOnly: false, icon: (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-  )},
-  { href: '/admin/members', label: '학부모 관리', adminOnly: false, icon: (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
-    </svg>
-  )},
-  { href: '/admin/announcements', label: '공지사항', adminOnly: false, icon: (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 01-1.44-4.282m3.102.069a18.03 18.03 0 01-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 018.835 2.535M10.34 6.66a23.847 23.847 0 008.835-2.535m0 0A23.74 23.74 0 0018.795 3m.38 1.125a23.91 23.91 0 011.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 001.014-5.395m0-3.46c.495.413.811 1.035.811 1.73 0 .695-.316 1.317-.811 1.73m0-3.46a24.347 24.347 0 010 3.46" />
-    </svg>
-  )},
-  { href: '/admin/departments', label: '부서/반', adminOnly: true, icon: (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3H21" />
-    </svg>
-  )},
-  { href: '/admin/users', label: '사용자', adminOnly: true, icon: (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-    </svg>
-  )},
+interface MenuItem {
+  href: string;
+  label: string;
+}
+
+interface MenuGroup {
+  label: string;
+  icon: React.ReactNode;
+  adminOnly: boolean;
+  items: MenuItem[];
+}
+
+const menuGroups: MenuGroup[] = [
+  {
+    label: '대시보드',
+    adminOnly: false,
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25a2.25 2.25 0 01-2.25-2.25v-2.25z" />
+      </svg>
+    ),
+    items: [{ href: '/admin', label: '대시보드' }],
+  },
+  {
+    label: '앨범',
+    adminOnly: false,
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M18 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75z" />
+      </svg>
+    ),
+    items: [
+      { href: '/admin/upload', label: '앨범 생성' },
+      { href: '/admin/albums', label: '히스토리' },
+    ],
+  },
+  {
+    label: '알림장',
+    adminOnly: false,
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+      </svg>
+    ),
+    items: [
+      { href: '/admin/bulletins', label: '작성' },
+      { href: '/admin/bulletins/history', label: '내역' },
+    ],
+  },
+  {
+    label: '커뮤니티',
+    adminOnly: false,
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+      </svg>
+    ),
+    items: [
+      { href: '/admin/members', label: '학부모 관리' },
+      { href: '/admin/announcements', label: '공지사항' },
+    ],
+  },
+  {
+    label: '설정',
+    adminOnly: true,
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+    ),
+    items: [
+      { href: '/admin/departments', label: '부서/반' },
+      { href: '/admin/users', label: '사용자' },
+    ],
+  },
 ];
+
+function SidebarGroup({
+  group,
+  pathname,
+  onNavigate,
+}: {
+  group: MenuGroup;
+  pathname: string;
+  onNavigate?: () => void;
+}) {
+  const isSingle = group.items.length === 1;
+  const isActive = group.items.some((item) => item.href === pathname);
+  const [open, setOpen] = useState(isActive);
+
+  if (isSingle) {
+    const item = group.items[0];
+    return (
+      <Link
+        href={item.href}
+        onClick={onNavigate}
+        className={cn(
+          'flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all',
+          pathname === item.href
+            ? 'bg-primary text-white shadow-sm'
+            : 'text-[var(--text-sub)] hover:bg-[var(--border)]/50 hover:text-[var(--text)]'
+        )}
+      >
+        {group.icon}
+        {group.label}
+      </Link>
+    );
+  }
+
+  return (
+    <div>
+      <button
+        onClick={() => setOpen(!open)}
+        className={cn(
+          'w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all',
+          isActive
+            ? 'text-primary bg-primary/5'
+            : 'text-[var(--text-sub)] hover:bg-[var(--border)]/50 hover:text-[var(--text)]'
+        )}
+      >
+        {group.icon}
+        <span className="flex-1 text-left">{group.label}</span>
+        <svg
+          className={cn('w-4 h-4 transition-transform', open ? 'rotate-180' : '')}
+          fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {open && (
+        <div className="ml-8 mt-0.5 space-y-0.5 border-l-2 border-[var(--border)] pl-3">
+          {group.items.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={onNavigate}
+              className={cn(
+                'block px-3 py-2 rounded-xl text-sm transition-all',
+                pathname === item.href
+                  ? 'font-bold text-primary bg-primary/5'
+                  : 'text-[var(--text-sub)] hover:text-[var(--text)] hover:bg-[var(--border)]/30'
+              )}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function AdminShell({
   isAdmin,
@@ -53,25 +168,12 @@ export default function AdminShell({
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const items = allItems.filter((i) => !i.adminOnly || isAdmin);
+  const groups = menuGroups.filter((g) => !g.adminOnly || isAdmin);
 
-  const sidebarLinks = (
+  const sidebarLinks = (onNavigate?: () => void) => (
     <nav className="space-y-1">
-      {items.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
-          onClick={() => setOpen(false)}
-          className={cn(
-            'flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all',
-            pathname === item.href
-              ? 'gradient-candy text-white shadow-md shadow-candy-purple/20'
-              : 'text-[var(--text-sub)] hover:bg-[var(--border)]/50 hover:text-[var(--text)]'
-          )}
-        >
-          {item.icon}
-          {item.label}
-        </Link>
+      {groups.map((group) => (
+        <SidebarGroup key={group.label} group={group} pathname={pathname} onNavigate={onNavigate} />
       ))}
     </nav>
   );
@@ -84,12 +186,12 @@ export default function AdminShell({
           <div className="flex items-center justify-between h-14">
             <div className="flex items-center gap-3">
               <Link href="/" className="flex items-center gap-2">
-                <span className="text-xl">📸</span>
-                <span className="font-extrabold text-lg bg-gradient-to-r from-candy-pink via-candy-purple to-candy-blue bg-clip-text text-transparent">
+                <CameraIcon className="w-5 h-5 text-primary" />
+                <span className="font-bold text-base tracking-tight text-primary">
                   우리교회
                 </span>
               </Link>
-              <span className="text-xs font-semibold text-candy-purple bg-candy-purple/10 px-2.5 py-1 rounded-full">
+              <span className="text-xs font-semibold text-primary bg-primary/10 px-2.5 py-1 rounded-full">
                 관리자
               </span>
             </div>
@@ -103,7 +205,6 @@ export default function AdminShell({
                 </svg>
                 사이트로
               </Link>
-              {/* 모바일 햄버거 */}
               <button
                 onClick={() => setOpen(true)}
                 className="md:hidden p-2 rounded-xl hover:bg-[var(--border)] text-[var(--text-sub)]"
@@ -119,10 +220,9 @@ export default function AdminShell({
 
       {/* Body */}
       <div className="max-w-6xl mx-auto px-4 py-6 flex gap-6">
-        {/* PC 사이드바 */}
         <aside className="hidden md:block w-56 shrink-0">
           <div className="sticky top-20">
-            {sidebarLinks}
+            {sidebarLinks()}
             <div className="mt-6 px-4">
               <Link
                 href="/"
@@ -137,19 +237,16 @@ export default function AdminShell({
           </div>
         </aside>
 
-        {/* 콘텐츠 */}
         <main className="flex-1 min-w-0">{children}</main>
       </div>
 
-      {/* 모바일 슬라이드 패널 (오른쪽) */}
+      {/* 모바일 슬라이드 패널 */}
       {open && (
         <>
           <div className="fixed inset-0 bg-black/40 z-[60] md:hidden" onClick={() => setOpen(false)} />
           <div className="fixed right-0 top-0 bottom-0 w-72 bg-[var(--surface)] z-[70] md:hidden shadow-2xl flex flex-col">
             <div className="flex items-center justify-between p-4 border-b border-[var(--border)]">
-              <span className="font-extrabold bg-gradient-to-r from-candy-pink via-candy-purple to-candy-blue bg-clip-text text-transparent">
-                메뉴
-              </span>
+              <span className="font-bold text-primary">메뉴</span>
               <button
                 onClick={() => setOpen(false)}
                 className="p-2 rounded-xl hover:bg-[var(--border)] text-[var(--text-sub)]"
@@ -160,7 +257,7 @@ export default function AdminShell({
               </button>
             </div>
             <div className="flex-1 overflow-y-auto p-4">
-              {sidebarLinks}
+              {sidebarLinks(() => setOpen(false))}
             </div>
             <div className="p-4 border-t border-[var(--border)]">
               <Link

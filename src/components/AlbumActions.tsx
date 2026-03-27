@@ -71,23 +71,23 @@ export default function AlbumActions({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           maxLength={100}
-          className="w-full px-3 py-2 bg-[var(--bg)] border border-[var(--border)] rounded-xl text-sm text-[var(--text)] outline-none focus:ring-2 focus:ring-candy-purple"
+          className="w-full px-3 py-2 bg-[var(--bg)] border border-[var(--border)] rounded-xl text-sm text-[var(--text)] outline-none focus:ring-2 focus:ring-primary"
         />
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           maxLength={500}
           rows={2}
-          className="w-full px-3 py-2 bg-[var(--bg)] border border-[var(--border)] rounded-xl text-sm text-[var(--text)] outline-none focus:ring-2 focus:ring-candy-purple resize-none"
+          className="w-full px-3 py-2 bg-[var(--bg)] border border-[var(--border)] rounded-xl text-sm text-[var(--text)] outline-none focus:ring-2 focus:ring-primary resize-none"
         />
         <input
           type="date"
           value={eventDate}
           onChange={(e) => setEventDate(e.target.value)}
-          className="w-full px-3 py-2 bg-[var(--bg)] border border-[var(--border)] rounded-xl text-sm text-[var(--text)] outline-none focus:ring-2 focus:ring-candy-purple"
+          className="w-full px-3 py-2 bg-[var(--bg)] border border-[var(--border)] rounded-xl text-sm text-[var(--text)] outline-none focus:ring-2 focus:ring-primary"
         />
         <div className="flex gap-2">
-          <button onClick={handleEdit} disabled={saving} className="flex-1 py-2 gradient-candy text-white rounded-xl text-sm font-bold disabled:opacity-50">
+          <button onClick={handleEdit} disabled={saving} className="flex-1 py-2 bg-primary text-white rounded-xl text-sm font-bold disabled:opacity-50 btn-press">
             {saving ? '저장 중...' : '저장'}
           </button>
           <button onClick={() => setEditing(false)} className="flex-1 py-2 bg-[var(--border)] text-[var(--text-sub)] rounded-xl text-sm font-bold">
@@ -101,7 +101,7 @@ export default function AlbumActions({
   if (deleting) {
     return (
       <div className="flex items-center gap-2 text-xs text-[var(--text-sub)]">
-        <svg className="w-4 h-4 animate-spin text-candy-red" fill="none" viewBox="0 0 24 24">
+        <svg className="w-4 h-4 animate-spin text-danger" fill="none" viewBox="0 0 24 24">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
         </svg>
@@ -124,7 +124,7 @@ export default function AlbumActions({
       {menuOpen && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
-          <div className="absolute right-0 mt-1 w-36 bg-[var(--surface-card)] rounded-2xl shadow-xl border border-[var(--border)] py-1 z-50">
+          <div className="absolute right-0 mt-1 w-36 bg-[var(--surface-card)] rounded-2xl shadow-xl border border-[var(--border)] py-1 z-50 animate-fade-up">
             <button
               onClick={() => { setMenuOpen(false); setEditing(true); }}
               className="w-full text-left px-4 py-2 text-sm text-[var(--text)] hover:bg-[var(--border)]/50"
@@ -133,7 +133,7 @@ export default function AlbumActions({
             </button>
             <button
               onClick={() => { setMenuOpen(false); handleDelete(); }}
-              className="w-full text-left px-4 py-2 text-sm text-candy-red hover:bg-candy-red/5"
+              className="w-full text-left px-4 py-2 text-sm text-danger hover:bg-danger/5"
             >
               삭제
             </button>

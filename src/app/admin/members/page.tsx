@@ -7,7 +7,7 @@ import { useConfirm } from '@/components/ConfirmDialog';
 import { useToast } from '@/hooks/useToast';
 import type { Department, Class, InviteCode } from '@/types';
 
-const inputClass = "px-4 pr-7 py-2.5 bg-[var(--bg)] border border-[var(--border)] rounded-2xl focus:ring-2 focus:ring-candy-purple outline-none text-[var(--text)] placeholder-[var(--text-sub)]";
+const inputClass = "px-4 pr-7 py-2.5 bg-[var(--bg)] border border-[var(--border)] rounded-2xl focus:ring-2 focus:ring-primary outline-none text-[var(--text)] placeholder-[var(--text-sub)]";
 
 export default function AdminMembersPage() {
   const confirm = useConfirm();
@@ -91,7 +91,7 @@ export default function AdminMembersPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-extrabold text-[var(--text)] mb-6">학부모 관리</h1>
+      <h1 className="text-xl font-bold text-[var(--text)] mb-6">학부모 관리</h1>
 
       {/* 반 선택 */}
       <div className="flex gap-3 mb-6">
@@ -117,7 +117,7 @@ export default function AdminMembersPage() {
       {selectedClass && (
         <>
           {/* 초대코드 생성 */}
-          <div className="bg-[var(--surface-card)] rounded-3xl border border-[var(--border)] p-6 mb-6">
+          <div className="bg-[var(--surface-card)] rounded-2xl shadow-sm shadow-black/4 p-6 mb-6">
             <h2 className="font-bold text-sm text-[var(--text)] mb-4">초대코드 생성</h2>
             <div className="flex items-end gap-3">
               <div>
@@ -134,37 +134,37 @@ export default function AdminMembersPage() {
               <button
                 onClick={handleCreateCode}
                 disabled={loading}
-                className="px-4 py-2 gradient-candy text-white rounded-xl text-sm font-bold hover:opacity-90 disabled:opacity-40"
+                className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-bold hover:opacity-90 disabled:opacity-40"
               >
                 코드 생성
               </button>
             </div>
 
             {newCode && (
-              <div className="mt-4 p-4 bg-candy-green/10 border border-candy-green/20 rounded-2xl">
-                <p className="text-sm text-candy-green mb-2">초대코드가 생성되었습니다!</p>
+              <div className="mt-4 p-4 bg-success/10 border border-success/20 rounded-2xl">
+                <p className="text-sm text-success mb-2">초대코드가 생성되었습니다!</p>
                 <div className="flex items-center gap-2">
                   <span className="text-2xl font-mono font-bold tracking-widest text-[var(--text)]">{newCode}</span>
                   <button
                     onClick={() => copyCode(newCode)}
-                    className="px-3 py-1 bg-candy-green text-white rounded-lg text-xs font-bold"
+                    className="px-3 py-1 bg-success text-white rounded-lg text-xs font-bold"
                   >
                     코드 복사
                   </button>
                   <button
                     onClick={() => copyInviteLink(newCode)}
-                    className="px-3 py-1 bg-candy-purple text-white rounded-lg text-xs font-bold"
+                    className="px-3 py-1 bg-primary text-white rounded-lg text-xs font-bold"
                   >
                     링크 복사
                   </button>
                 </div>
-                <p className="text-xs text-candy-green/70 mt-1">7일간 유효합니다</p>
+                <p className="text-xs text-success/70 mt-1">7일간 유효합니다</p>
               </div>
             )}
           </div>
 
           {/* 초대코드 목록 */}
-          <div className="bg-[var(--surface-card)] rounded-3xl border border-[var(--border)] p-6 mb-6">
+          <div className="bg-[var(--surface-card)] rounded-2xl shadow-sm shadow-black/4 p-6 mb-6">
             <h2 className="font-bold text-sm text-[var(--text)] mb-4">초대코드 목록</h2>
             <div className="space-y-2">
               {inviteCodes.map((ic) => (
@@ -177,20 +177,20 @@ export default function AdminMembersPage() {
                   </div>
                   <div className="text-right">
                     {ic.used_by ? (
-                      <span className="text-xs text-candy-green">사용됨</span>
+                      <span className="text-xs text-success">사용됨</span>
                     ) : new Date(ic.expires_at) < new Date() ? (
-                      <span className="text-xs text-candy-red">만료</span>
+                      <span className="text-xs text-danger">만료</span>
                     ) : (
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => copyCode(ic.code)}
-                          className="text-xs text-candy-purple hover:underline"
+                          className="text-xs text-primary hover:underline"
                         >
                           코드
                         </button>
                         <button
                           onClick={() => copyInviteLink(ic.code)}
-                          className="text-xs text-candy-blue hover:underline"
+                          className="text-xs text-info hover:underline"
                         >
                           링크
                         </button>
@@ -206,7 +206,7 @@ export default function AdminMembersPage() {
           </div>
 
           {/* 멤버 목록 */}
-          <div className="bg-[var(--surface-card)] rounded-3xl border border-[var(--border)] p-6">
+          <div className="bg-[var(--surface-card)] rounded-2xl shadow-sm shadow-black/4 p-6">
             <h2 className="font-bold text-sm text-[var(--text)] mb-4">
               멤버 ({members.length}명)
             </h2>
@@ -214,7 +214,7 @@ export default function AdminMembersPage() {
               {members.map((m) => (
                 <div key={m.user_id} className={`flex items-center justify-between p-3 bg-[var(--bg)] rounded-xl transition-opacity ${removingId === m.user_id ? 'opacity-50' : ''}`}>
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl gradient-candy flex items-center justify-center text-xs font-bold text-white">
+                    <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center text-xs font-bold text-white">
                       {m.user?.name?.charAt(0) || '?'}
                     </div>
                     <span className="text-sm font-semibold text-[var(--text)]">{m.user?.name}</span>
@@ -224,7 +224,7 @@ export default function AdminMembersPage() {
                       {m.role === 'teacher' ? '선생님' : '학부모'}
                     </span>
                     {removingId === m.user_id ? (
-                      <svg className="w-4 h-4 animate-spin text-candy-red" fill="none" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 animate-spin text-danger" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                       </svg>
@@ -240,7 +240,7 @@ export default function AdminMembersPage() {
                           toast('멤버가 제거되었습니다', 'success');
                           setRemovingId(null);
                         }}
-                        className="text-xs text-candy-red/60 hover:text-candy-red"
+                        className="text-xs text-danger/60 hover:text-danger"
                       >
                         제거
                       </button>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import AlbumCard from './AlbumCard';
+import { CameraIcon, SearchIcon } from './icons';
 import type { Album } from '@/types';
 
 type AlbumWithRelations = Album & {
@@ -87,15 +88,15 @@ export default function InfiniteAlbumFeed({
 
   if (albums.length === 0) {
     return (
-      <div className="text-center py-16 bg-[var(--surface-card)] rounded-3xl border border-[var(--border)]">
-        <div className="text-4xl mb-3">
-          {search ? '🔍' : '📷'}
+      <div className="text-center py-16 bg-[var(--surface-card)] rounded-2xl shadow-sm shadow-black/4">
+        <div className="flex justify-center mb-3 text-[var(--text-sub)]">
+          {search ? <SearchIcon className="w-8 h-8" /> : <CameraIcon className="w-8 h-8" />}
         </div>
         <p className="text-sm font-semibold text-[var(--text-sub)]">
           {search ? `"${search}"에 대한 결과가 없습니다` : '아직 앨범이 없습니다'}
         </p>
         <p className="text-xs text-[var(--text-sub)] mt-1.5">
-          {search ? '다른 검색어로 시도해보세요' : '선생님이 사진을 올리면 여기에 나타나요!'}
+          {search ? '다른 검색어로 시도해보세요' : '선생님이 사진을 올리면 여기에 나타나요'}
         </p>
       </div>
     );
@@ -103,7 +104,7 @@ export default function InfiniteAlbumFeed({
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 stagger-children">
         {albums.map((album) => (
           <AlbumCard key={album.id} album={album} currentUserId={currentUserId} />
         ))}
@@ -113,9 +114,9 @@ export default function InfiniteAlbumFeed({
         <div ref={loaderRef} className="flex justify-center py-8">
           {loading && (
             <div className="flex gap-1">
-              <div className="w-2 h-2 rounded-full bg-candy-purple/40 animate-bounce" style={{ animationDelay: '0s' }} />
-              <div className="w-2 h-2 rounded-full bg-candy-purple/40 animate-bounce" style={{ animationDelay: '0.15s' }} />
-              <div className="w-2 h-2 rounded-full bg-candy-purple/40 animate-bounce" style={{ animationDelay: '0.3s' }} />
+              <div className="w-2 h-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: '0s' }} />
+              <div className="w-2 h-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: '0.15s' }} />
+              <div className="w-2 h-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: '0.3s' }} />
             </div>
           )}
         </div>

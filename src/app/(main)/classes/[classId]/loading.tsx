@@ -5,7 +5,7 @@ export default function ClassLoading() {
       <div className="h-8 bg-[var(--border)] rounded-2xl w-1/2" />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="h-64 bg-[var(--border)] rounded-3xl" />
+          <div key={i} className="h-64 bg-[var(--border)] rounded-2xl" />
         ))}
       </div>
     </div>

@@ -1,6 +1,6 @@
 export type UserRole = 'admin' | 'teacher' | 'parent';
 export type InviteRole = 'teacher' | 'parent';
-export type NotificationType = 'new_album' | 'new_comment';
+export type NotificationType = 'new_album' | 'new_comment' | 'new_bulletin';
 
 export interface Department {
   id: string;
@@ -90,12 +90,35 @@ export interface Announcement {
   department?: Department;
 }
 
+export type BulletinCategory = 'lesson' | 'supply' | 'event' | 'general';
+
+export interface Bulletin {
+  id: string;
+  class_id: string;
+  author_id: string;
+  title: string;
+  content: string;
+  category: BulletinCategory;
+  created_at: string;
+  updated_at: string;
+  class?: Class;
+  author?: User;
+}
+
+export interface BulletinRead {
+  bulletin_id: string;
+  user_id: string;
+  read_at: string;
+}
+
 export interface Notification {
   id: string;
   user_id: string;
-  album_id: string;
+  album_id: string | null;
+  bulletin_id: string | null;
   type: NotificationType;
   is_read: boolean;
   created_at: string;
   album?: Album;
+  bulletin?: Bulletin;
 }

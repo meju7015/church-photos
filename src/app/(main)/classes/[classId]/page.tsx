@@ -50,11 +50,11 @@ export default async function ClassPage({
     <div>
       <Link
         href={`/departments/${cls.department_id}`}
-        className="text-sm text-candy-purple font-semibold hover:underline flex items-center gap-1"
+        className="text-sm text-primary font-semibold hover:underline flex items-center gap-1"
       >
         <span>&larr;</span> {(cls.department as any)?.name}
       </Link>
-      <h1 className="text-xl font-extrabold text-[var(--text)] mt-3 mb-6">
+      <h1 className="text-xl font-bold text-[var(--text)] mt-3 mb-6">
         {(cls.department as any)?.name} - {cls.name}
       </h1>
 
@@ -65,7 +65,7 @@ export default async function ClassPage({
           ))}
         </div>
       ) : (
-        <div className="text-center py-16 bg-[var(--surface-card)] rounded-3xl border border-[var(--border)]">
+        <div className="text-center py-16 bg-[var(--surface-card)] rounded-2xl shadow-sm shadow-black/4">
           <p className="text-[var(--text-sub)]">아직 앨범이 없습니다</p>
         </div>
       )}

@@ -19,7 +19,7 @@ export default function AdminError({
       <p className="text-sm text-[var(--text-sub)] mb-6">다시 시도해주세요.</p>
       <button
         onClick={reset}
-        className="px-6 py-2.5 gradient-candy text-white rounded-2xl text-sm font-bold hover:opacity-90 transition-all"
+        className="px-6 py-2.5 bg-primary text-white rounded-2xl text-sm font-bold hover:opacity-90 transition-all"
       >
         다시 시도
       </button>

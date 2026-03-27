@@ -4,13 +4,16 @@ import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { formatDateTime } from '@/lib/utils';
 import type { Comment } from '@/types';
+import UserAvatar from './UserAvatar';
 
 export default function CommentSection({
   albumId,
+  bulletinId,
   initialComments,
   currentUserId,
 }: {
-  albumId: string;
+  albumId?: string;
+  bulletinId?: string;
   initialComments: Comment[];
   currentUserId: string;
 }) {
@@ -27,7 +30,7 @@ export default function CommentSection({
     const res = await fetch('/api/comments', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ album_id: albumId, content: content.trim() }),
+      body: JSON.stringify({ album_id: albumId, bulletin_id: bulletinId, content: content.trim() }),
     });
 
     if (res.ok) {
@@ -47,17 +50,15 @@ export default function CommentSection({
   };
 
   return (
-    <div className="bg-[var(--surface-card)] rounded-3xl border border-[var(--border)] p-5">
-      <h3 className="font-bold text-sm text-[var(--text)] mb-4 flex items-center gap-2">
+    <div className="bg-[var(--surface-card)] rounded-2xl shadow-sm shadow-black/4 p-5">
+      <h3 className="font-semibold text-base text-[var(--text)] mb-5 flex items-center gap-2">
         댓글 {comments.length > 0 && `(${comments.length})`}
       </h3>
 
-      <div className="space-y-3 mb-4">
+      <div className="space-y-4 mb-5">
         {comments.map((comment) => (
           <div key={comment.id} className="flex gap-3">
-            <div className="w-8 h-8 rounded-xl gradient-candy flex items-center justify-center text-xs font-bold text-white shrink-0">
-              {(comment.user as any)?.name?.charAt(0) || '?'}
-            </div>
+            <UserAvatar name={(comment.user as any)?.name || '?'} avatarUrl={(comment.user as any)?.avatar_url} size="sm" />
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <span className="text-sm font-semibold text-[var(--text)]">{(comment.user as any)?.name}</span>
@@ -66,14 +67,14 @@ export default function CommentSection({
                 </span>
                 {comment.user_id === currentUserId && (
                   deletingId === comment.id ? (
-                    <svg className="w-3 h-3 animate-spin text-candy-red" fill="none" viewBox="0 0 24 24">
+                    <svg className="w-3 h-3 animate-spin text-danger" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                     </svg>
                   ) : (
                     <button
                       onClick={() => handleDelete(comment.id)}
-                      className="text-xs text-candy-red/60 hover:text-candy-red"
+                      className="text-xs text-danger/60 hover:text-danger"
                     >
                       삭제
                     </button>
@@ -101,7 +102,7 @@ export default function CommentSection({
           }}
           placeholder="댓글을 입력하세요 (Shift+Enter로 줄바꿈)"
           rows={1}
-          className="flex-1 px-4 py-2.5 bg-[var(--bg)] border border-[var(--border)] rounded-2xl text-sm focus:ring-2 focus:ring-candy-purple focus:border-transparent outline-none text-[var(--text)] placeholder-[var(--text-sub)] resize-none max-h-24"
+          className="flex-1 px-4 py-2.5 bg-[var(--bg)] border border-[var(--border)] rounded-2xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-[var(--text)] placeholder-[var(--text-sub)] resize-none max-h-24"
           onInput={(e) => {
             const el = e.target as HTMLTextAreaElement;
             el.style.height = 'auto';
@@ -111,7 +112,7 @@ export default function CommentSection({
         <button
           type="submit"
           disabled={loading || !content.trim()}
-          className="px-5 py-2.5 gradient-candy text-white rounded-2xl text-sm font-bold hover:opacity-90 disabled:opacity-40 transition-all shrink-0"
+          className="px-5 py-2.5 bg-primary text-white rounded-2xl text-sm font-bold hover:opacity-90 disabled:opacity-40 transition-all shrink-0 btn-press"
         >
           등록
         </button>
@@ -130,7 +131,7 @@ function CommentContent({ content }: { content: string }) {
       <p className="text-sm text-[var(--text)] mt-0.5 whitespace-pre-line">
         {content}
         {needsTruncate && (
-          <button onClick={() => setExpanded(false)} className="text-candy-purple text-xs ml-1 font-semibold">접기</button>
+          <button onClick={() => setExpanded(false)} className="text-primary text-xs ml-1 font-semibold">접기</button>
         )}
       </p>
     );
@@ -141,7 +142,7 @@ function CommentContent({ content }: { content: string }) {
   return (
     <p className="text-sm text-[var(--text)] mt-0.5 whitespace-pre-line">
       {truncated}...
-      <button onClick={() => setExpanded(true)} className="text-candy-purple text-xs ml-1 font-semibold">더보기</button>
+      <button onClick={() => setExpanded(true)} className="text-primary text-xs ml-1 font-semibold">더보기</button>
     </p>
   );
 }

@@ -82,9 +82,9 @@ export default function PhotoGrid({
 
   if (photos.length === 0) {
     return (
-      <div className="text-center py-16 bg-[var(--surface-card)] rounded-3xl border border-[var(--border)]">
+      <div className="text-center py-16 bg-[var(--surface-card)] rounded-2xl shadow-sm shadow-black/4">
         <p className="text-[var(--text-sub)]">아직 사진이 없습니다</p>
-        <p className="text-xs text-[var(--text-sub)] mt-1">사진을 추가해보세요!</p>
+        <p className="text-xs text-[var(--text-sub)] mt-1">사진을 추가해보세요</p>
       </div>
     );
   }
@@ -101,14 +101,14 @@ export default function PhotoGrid({
             }}
             className={`px-3 py-1.5 rounded-2xl text-xs font-semibold transition-all ${
               selectMode
-                ? 'gradient-candy text-white'
-                : 'bg-[var(--surface-card)] border border-[var(--border)] text-[var(--text-sub)] hover:border-candy-purple/40'
+                ? 'bg-primary text-white'
+                : 'bg-[var(--surface-card)] border border-[var(--border)] text-[var(--text-sub)] hover:border-primary/30'
             }`}
           >
             {selectMode ? '취소' : '선택'}
           </button>
           {selectMode && selected.size > 0 && (
-            <span className="text-xs text-candy-purple font-semibold">{selected.size}장 선택</span>
+            <span className="text-xs text-primary font-semibold">{selected.size}장 선택</span>
           )}
         </div>
       )}
@@ -126,7 +126,7 @@ export default function PhotoGrid({
             }}
             className={`aspect-square bg-[var(--border)] rounded-2xl overflow-hidden transition-all relative ${
               selectMode ? '' : 'hover:opacity-90 hover:scale-[1.02]'
-            } ${selected.has(photo.id) ? 'ring-3 ring-candy-purple ring-offset-2 ring-offset-[var(--bg)]' : ''}`}
+            } ${selected.has(photo.id) ? 'ring-3 ring-primary ring-offset-2 ring-offset-[var(--bg)]' : ''}`}
           >
             <img
               src={photo.thumbnailUrl}
@@ -137,7 +137,7 @@ export default function PhotoGrid({
             {selectMode && photo.canDelete && (
               <div className={`absolute top-2 right-2 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
                 selected.has(photo.id)
-                  ? 'bg-candy-purple border-candy-purple'
+                  ? 'bg-primary border-primary'
                   : 'bg-black/30 border-white/80'
               }`}>
                 {selected.has(photo.id) && (
@@ -157,7 +157,7 @@ export default function PhotoGrid({
           <button
             onClick={handleBatchDelete}
             disabled={deleting}
-            className="px-6 py-3 bg-candy-red text-white rounded-2xl text-sm font-bold shadow-lg shadow-candy-red/30 hover:opacity-90 disabled:opacity-50 transition-all flex items-center gap-2"
+            className="px-6 py-3 bg-danger text-white rounded-2xl text-sm font-bold shadow-lg shadow-danger/20 hover:opacity-90 disabled:opacity-50 transition-all flex items-center gap-2 btn-press"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />

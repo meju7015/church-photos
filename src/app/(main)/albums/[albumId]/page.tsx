@@ -72,16 +72,16 @@ export default async function AlbumPage({
   return (
     <div>
       {/* Header */}
-      <div className="mb-6">
+      <div className="mb-8">
         <Link
           href={`/classes/${album.class_id}`}
-          className="text-sm text-candy-purple font-semibold hover:underline flex items-center gap-1"
+          className="text-sm text-primary font-semibold hover:underline flex items-center gap-1"
         >
           <span>&larr;</span> {(album.class as any)?.department?.name} - {(album.class as any)?.name}
         </Link>
         <div className="flex items-start justify-between mt-3">
           <div>
-            <h1 className="text-xl font-extrabold text-[var(--text)]">{album.title}</h1>
+            <h1 className="text-xl font-bold text-[var(--text)]">{album.title}</h1>
             {album.description && (
               <ExpandableText text={album.description} />
             )}
@@ -110,12 +110,12 @@ export default async function AlbumPage({
       </div>
 
       {/* Action buttons */}
-      <div className="flex justify-end gap-2 mb-4">
+      <div className="flex justify-end gap-3 mb-6">
         <ShareButton title={album.title} />
         {photos.length > 0 && <ZipDownloadButton photos={photos} albumTitle={album.title} />}
         <Link
           href={`/albums/${albumId}/upload`}
-          className="px-5 py-2.5 gradient-candy text-white rounded-2xl text-sm font-bold hover:opacity-90 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md shadow-candy-purple/20"
+          className="px-5 py-2.5 bg-primary text-white rounded-2xl text-sm font-bold hover:opacity-90 transition-all btn-press shadow-sm"
         >
           사진 추가
         </Link>
@@ -123,7 +123,7 @@ export default async function AlbumPage({
 
       <PhotoGrid photos={photos} albumId={albumId} />
 
-      <div className="mt-8">
+      <div className="mt-10">
         <CommentSection
           albumId={albumId}
           initialComments={comments || []}
